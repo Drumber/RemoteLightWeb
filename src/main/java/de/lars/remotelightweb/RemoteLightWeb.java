@@ -1,6 +1,10 @@
 package de.lars.remotelightweb;
 
+import java.io.IOException;
+import java.net.URL;
 import java.nio.file.Paths;
+import java.util.jar.Attributes;
+import java.util.jar.Manifest;
 
 import javax.annotation.PreDestroy;
 
@@ -17,6 +21,7 @@ import de.lars.remotelightclient.api.RemoteLightAPI;
 @SpringBootApplication(exclude = ErrorMvcAutoConfiguration.class)
 public class RemoteLightWeb extends SpringBootServletInitializer {
 
+	public final static String VERSION = getVersion();
 	private static ConfigurableApplicationContext context;
 	private static RemoteLightWeb instance;
 	private RemoteLightAPI rlApi;
@@ -69,6 +74,26 @@ public class RemoteLightWeb extends SpringBootServletInitializer {
      */
     public RemoteLightAPI getAPI() {
     	return rlApi;
+    }
+    
+    
+    // adapted from https://stackoverflow.com/a/1273432
+    private static String getVersion() {
+    	Class<RemoteLightWeb> clazz = RemoteLightWeb.class;
+    	String className = clazz.getSimpleName() + ".class";
+    	String classPath = clazz.getResource(className).toString();
+    	if (!classPath.startsWith("jar")) {
+    	  return "dev-version";
+    	}
+    	String manifestPath = classPath.substring(0, classPath.lastIndexOf("!") + 1) + "/META-INF/MANIFEST.MF";
+		try {
+			Manifest manifest = new Manifest(new URL(manifestPath).openStream());
+	    	Attributes attr = manifest.getMainAttributes();
+	    	String value = attr.getValue("Implementation-Version");
+	    	return value;
+		} catch (IOException e) {
+		}
+		return "?";
     }
 
 }

@@ -1,0 +1,64 @@
+.layout {
+	
+}
+
+/* large screen */
+@media screen and (min-width: 771px) {
+	.title {
+		color: #035afc;
+		font-size: 60px;
+	}
+	.version {
+		color: grey;
+		margin-bottom: 20px;
+	}
+}
+
+/* medium screen */
+@media screen and (max-width: 770px) {
+	.title {
+		color: #035afc;
+		font-size: 35px;
+	}
+	.version {
+		color: grey;
+		font-size: 12px;
+		margin-bottom: 10px;
+	}
+}
+
+/* small screen */
+@media screen and (max-width: 400px) {
+	.title {
+		color: #035afc;
+		font-size: 25px;
+	}
+	.version {
+		color: grey;
+		font-size: 10px;
+		margin-bottom: 5px;
+	}
+}
+
+.author {
+	color: grey;
+	text-align: center;
+	width: 100%;
+	margin-top: 0px;
+	font-size: 14px;
+}
+
+.github {
+	font-size: 14px;
+	margin-top: 0px;
+}
+
+.credits {
+	margin-top: 50px;
+	font-size: 2em;
+}
+
+.credit-items {
+	margin-top: 0px;
+	margin-bottom: 0px;
+}
