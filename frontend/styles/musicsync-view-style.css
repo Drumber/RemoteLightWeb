@@ -1,0 +1,18 @@
+/* Content */
+.musicsync-view__effects {
+	flex-wrap: wrap;
+	align-content: flex-start;
+}
+
+/* options (footer) */
+.musicsync-view__options {
+	
+}
+
+/* Output buttons */
+.musicsync-view__buttons {
+	margin: 5px 5px;
+	width: 120px;
+	height: 120px;
+	white-space: normal;
+}

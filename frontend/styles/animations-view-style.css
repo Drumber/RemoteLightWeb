@@ -1,0 +1,18 @@
+/* Content */
+.animations-view__animations {
+	flex-wrap: wrap;
+	align-content: flex-start;
+}
+
+/* options (footer) */
+.animations-view__options {
+	
+}
+
+/* Output buttons */
+.animations-view__buttons {
+	margin: 5px 5px;
+	width: 120px;
+	height: 120px;
+	white-space: normal;
+}

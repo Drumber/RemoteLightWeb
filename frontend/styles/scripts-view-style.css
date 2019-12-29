@@ -1,0 +1,18 @@
+/* Content */
+.scripts-view__scripts {
+	flex-wrap: wrap;
+	align-content: flex-start;
+}
+
+/* options (footer) */
+.scripts-view__options {
+	
+}
+
+/* Output buttons */
+.scripts-view__buttons {
+	margin: 5px 5px;
+	width: 120px;
+	height: 120px;
+	white-space: normal;
+}
