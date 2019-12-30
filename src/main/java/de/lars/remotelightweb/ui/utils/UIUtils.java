@@ -1,23 +1,19 @@
 package de.lars.remotelightweb.ui.utils;
 
-import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
-import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 
 public class UIUtils {
 
 	public static Button createButton(String text, VaadinIcon icon, ButtonVariant... variants) {
-		Icon i = new Icon(icon);
-		i.getElement().setAttribute("slot", "prefix");
-		Button button = new Button(text, i);
+		Button button = new Button(text, icon.create());
 		button.addThemeVariants(variants);
 		return button;
 	}
 
 	public static Button createButton(VaadinIcon icon, ButtonVariant... variants) {
-		Button button = new Button(new Icon(icon));
+		Button button = new Button(icon.create());
 		button.addThemeVariants(variants);
 		return button;
 	}
@@ -27,11 +23,21 @@ public class UIUtils {
 		button.addThemeVariants(variants);
 		return button;
 	}
-
-	public static void setAriaLabel(String value, Component... components) {
-		for (Component component : components) {
-			component.getElement().setAttribute("aria-label", value);
-		}
+	
+	/**
+	 * Create button with margin
+	 * @param text Button text
+	 * @param marginArg (e.g. '5px 5px')
+	 */
+	public static Button createButton(String text, String marginArg) {
+		Button button = new Button(text);
+		button.getStyle().set("margin", marginArg);
+		return button;
+	}
+	
+	public static Button addMargin(Button button, String marginArg) {
+		button.getStyle().set("margin", marginArg);
+		return button;
 	}
 
 }

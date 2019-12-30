@@ -33,4 +33,9 @@ public class FileEditor {
 		return file.createNewFile();
 	}
 	
+	public static boolean deleteFile(String fileName) {
+		File file = new File(fileName);
+		return file.delete();
+	}
+	
 }

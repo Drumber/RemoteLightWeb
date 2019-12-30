@@ -14,6 +14,7 @@ import org.springframework.boot.autoconfigure.web.servlet.error.ErrorMvcAutoConf
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 import org.springframework.context.ConfigurableApplicationContext;
 import de.lars.remotelightclient.api.RemoteLightAPI;
+import de.lars.remotelightweb.backend.ConfigFile;
 
 /**
  * The entry point of the Spring Boot application.
@@ -22,12 +23,15 @@ import de.lars.remotelightclient.api.RemoteLightAPI;
 public class RemoteLightWeb extends SpringBootServletInitializer {
 
 	public final static String VERSION = getVersion();
+	public final static String ROOT_FOLDER_NAME = "RemoteLightWeb";
+	private static ConfigFile config;
 	private static ConfigurableApplicationContext context;
 	private static RemoteLightWeb instance;
 	private RemoteLightAPI rlApi;
 	private boolean closing;
 	
     public static void main(String[] args) {
+		config = new ConfigFile();
         // run web server
         context = SpringApplication.run(RemoteLightWeb.class, args);
     }
@@ -36,7 +40,7 @@ public class RemoteLightWeb extends SpringBootServletInitializer {
 		instance = this;
 		// set up RemoteLightAPI
 		RemoteLightAPI.setRootDirectory(Paths.get(".").toAbsolutePath().normalize().toString());	// directory where the jar was executed
-		RemoteLightAPI.setRootName("RemoteLightWeb");
+		RemoteLightAPI.setRootName(ROOT_FOLDER_NAME);
 		rlApi = new RemoteLightAPI();
 	}
     
@@ -74,6 +78,10 @@ public class RemoteLightWeb extends SpringBootServletInitializer {
      */
     public RemoteLightAPI getAPI() {
     	return rlApi;
+    }
+    
+    public static ConfigFile getConfig() {
+    	return config;
     }
     
     

@@ -2,6 +2,7 @@ package de.lars.remotelightweb.ui.views;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.tinylog.Logger;
@@ -32,6 +33,7 @@ public class SettingsView extends VerticalLayout {
 	
 	private SettingsManager sm;
 	private List<SettingPanel> settingPanels;
+	private List<String> settingBlacklist = Arrays.asList(new String[] {"ui.language","main.checkupdates","ui.hideintray"});
 	
 	public SettingsView() {
 		sm = RemoteLightWeb.getInstance().getAPI().getSettingsManager();
@@ -80,6 +82,9 @@ public class SettingsView extends VerticalLayout {
 		layout.add(catTitle);
 		
 		for(Setting s : sm.getSettingsFromCategory(category)) {
+			if(settingBlacklist.contains(s.getId())) {
+				continue;
+			}
 			SettingPanel spanel = SettingPanelUtil.getSettingPanel(s);
 			settingPanels.add(spanel);
 			layout.add(spanel);

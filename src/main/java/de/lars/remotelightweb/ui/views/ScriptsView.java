@@ -10,6 +10,7 @@ import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.html.H4;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.FlexLayout;
@@ -27,6 +28,7 @@ import de.lars.remotelightweb.RemoteLightWeb;
 import de.lars.remotelightweb.backend.scripteditor.FileEditor;
 import de.lars.remotelightweb.ui.MainLayout;
 import de.lars.remotelightweb.ui.components.custom.PaperSlider;
+import de.lars.remotelightweb.ui.utils.UIUtils;
 
 @CssImport("./styles/scripts-view-style.css")
 @PageTitle("Scripts")
@@ -64,8 +66,10 @@ public class ScriptsView extends VerticalLayout {
 		
 		layoutSpeed = new FormLayout();
 		editDiv = new Div();
-		editDiv.add(new Button("Edit script", e -> openEditDialog(luaManager.getActiveLuaScriptPath())));
-		editDiv.add(new Button("Add script", e -> addScript()));
+		editDiv.add(UIUtils.addMargin(new Button("Edit script", e -> openEditDialog(luaManager.getActiveLuaScriptPath())), "5px 5px"));
+		editDiv.add(UIUtils.addMargin(new Button("Add script", e -> addScript()), "5px 5px"));
+		//editDiv.add(UIUtils.addMargin(new Button("Delete script", e -> deleteScript(luaManager.getActiveLuaScriptPath())), "5px 5px"));
+		// TODO not working because the file is opened by Java RE
 	}
 	
 	private void initLayout() {
@@ -129,10 +133,11 @@ public class ScriptsView extends VerticalLayout {
 	}
 	
 	
-	private void showError(String error) {
+	private void showError(final String error) {
 		getUI().get().access(() -> {
 			VerticalLayout div = new VerticalLayout();
 			Dialog dialog = new Dialog(div);
+			div.add(new H4("An error occured while executing the Lua script"));
 			div.add(new Label(error));
 			div.add(new Button("Close", e -> dialog.close()));
 			dialog.open();
@@ -142,7 +147,7 @@ public class ScriptsView extends VerticalLayout {
 	
 	private void openEditDialog(String filePath) {
 		if(filePath == null || filePath.isEmpty()) {
-			Notification.show("No scipt selected!");
+			Notification.show("No script selected!");
 			return;
 		}
 		
@@ -204,6 +209,32 @@ public class ScriptsView extends VerticalLayout {
 			}
 		});
 		dialog.add(add);
+		dialog.open();
+	}
+	
+	private void deleteScript(String filePath) {
+		if(filePath == null || filePath.isEmpty()) {
+			Notification.show("No script selected!");
+			return;
+		}
+		luaManager.stopLuaScript();
+		
+		Dialog dialog = new Dialog();
+		VerticalLayout layout = new VerticalLayout();
+		layout.add(new Label("Are you sure you want to delete '" + filePath + "'?"));
+		
+		Button delete = new Button("Delete", e -> {
+			boolean rmvd = FileEditor.deleteFile(filePath);
+			addScriptsToPanel();
+			Notification.show(rmvd ? "Script successfully deleted!" : "Could not delete script!");
+			dialog.close();
+		});
+		Button cancel = new Button("Cancel", e -> dialog.close());
+		delete.getStyle().set("margin", "5px 5px");
+		cancel.getStyle().set("margin", "5px 5px");
+		
+		layout.add(new Div(cancel, delete));
+		dialog.add(layout);
 		dialog.open();
 	}
 

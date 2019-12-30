@@ -12,7 +12,6 @@ import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.FlexLayout;
-import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.radiobutton.RadioButtonGroup;
 import com.vaadin.flow.router.PageTitle;
@@ -110,7 +109,7 @@ public class MusicSyncView extends VerticalLayout {
 			sm.getSettingObject("musicsync.adjustment").setValue(adjustment.getValue());
 			msm.setAdjustment(adjustment.getValue() / 100.0);
 		});
-		layoutSettings.add(new Label("Adjustment"), adjustment);
+		layoutSettings.add(new Label("Gain"), adjustment);
 		
 		addInputsToLayout();
 	}
@@ -136,6 +135,7 @@ public class MusicSyncView extends VerticalLayout {
 	private void toggleEffect(MusicEffect m) {
 		if(msm.getActiveEffect() != null && msm.getActiveEffect().getName().equals(m.getName())) {
 			msm.stop();
+			layoutEffectOptions.removeAll();
 		} else {
 			if(RemoteLightWeb.getInstance().getAPI().getOutputManager().getActiveOutput() != null &&
 					RemoteLightWeb.getInstance().getAPI().getOutputManager().getActiveOutput().getState() == ConnectionState.CONNECTED)
@@ -168,6 +168,7 @@ public class MusicSyncView extends VerticalLayout {
 	 * Inputs
 	 */
 	private void addInputsToLayout() {
+		layoutSettings.add(new Label("Inputs:"));
 		String input = (String) sm.getSettingObject("musicsync.input").getValue();
 		RadioButtonGroup<String> buttonGroup = new RadioButtonGroup<>();
 		List<String> groupItems = new ArrayList<>();
