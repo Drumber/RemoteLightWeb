@@ -103,7 +103,7 @@ public class MusicSyncView extends VerticalLayout {
 		
 		PaperSlider adjustment = new PaperSlider();
 		adjustment.setMin(50);
-		adjustment.setMax(700);
+		adjustment.setMax(900);
 		adjustment.setValue((int) sm.getSettingObject("musicsync.adjustment").getValue());
 		adjustment.addValueChangeListener(e -> {
 			sm.getSettingObject("musicsync.adjustment").setValue(adjustment.getValue());

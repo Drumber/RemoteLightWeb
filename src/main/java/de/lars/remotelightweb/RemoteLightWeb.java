@@ -1,11 +1,8 @@
 package de.lars.remotelightweb;
 
-import java.io.IOException;
-import java.net.URL;
+import java.io.InputStream;
 import java.nio.file.Paths;
-import java.util.jar.Attributes;
-import java.util.jar.Manifest;
-
+import java.util.Properties;
 import javax.annotation.PreDestroy;
 
 import org.springframework.boot.SpringApplication;
@@ -22,7 +19,7 @@ import de.lars.remotelightweb.backend.ConfigFile;
 @SpringBootApplication(exclude = ErrorMvcAutoConfiguration.class)
 public class RemoteLightWeb extends SpringBootServletInitializer {
 
-	public final static String VERSION = getVersion();
+	public static final String VERSION = getVersion();
 	public final static String ROOT_FOLDER_NAME = "RemoteLightWeb";
 	private static ConfigFile config;
 	private static ConfigurableApplicationContext context;
@@ -87,19 +84,12 @@ public class RemoteLightWeb extends SpringBootServletInitializer {
     
     // adapted from https://stackoverflow.com/a/1273432
     private static String getVersion() {
-    	Class<RemoteLightWeb> clazz = RemoteLightWeb.class;
-    	String className = clazz.getSimpleName() + ".class";
-    	String classPath = clazz.getResource(className).toString();
-    	if (!classPath.startsWith("jar")) {
-    	  return "dev-version";
-    	}
-    	String manifestPath = classPath.substring(0, classPath.lastIndexOf("!") + 1) + "/META-INF/MANIFEST.MF";
-		try {
-			Manifest manifest = new Manifest(new URL(manifestPath).openStream());
-	    	Attributes attr = manifest.getMainAttributes();
-	    	String value = attr.getValue("Implementation-Version");
-	    	return value;
-		} catch (IOException e) {
+    	InputStream resStream = RemoteLightWeb.class.getClass().getResourceAsStream("/META-INF/maven/de.lars.remotelightweb/remotelightweb/pom.properties");
+    	Properties prop = new Properties();
+    	try {
+			prop.load(resStream);
+			return prop.getProperty("version", "?");
+		} catch (Exception e) {
 		}
 		return "?";
     }

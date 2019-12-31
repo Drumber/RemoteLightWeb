@@ -32,7 +32,7 @@ import de.lars.remotelightweb.ui.views.ScriptsView;
 import de.lars.remotelightweb.ui.views.SettingsView;
 
 @Route
-@PWA(name = "RemoteLightWeb for controlling RemoteLight[Server]", shortName = "RemoteLightWeb")
+@PWA(name = "RemoteLightWeb Control Software", shortName = "RemoteLightWeb")
 public class MainLayout extends AppLayoutRouterLayout<LeftLayouts.LeftResponsive> {
 	
 	private static MainLayout instance;
