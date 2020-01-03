@@ -3,7 +3,7 @@
     <groupId>de.lars.remotelightweb</groupId>
     <artifactId>remotelightweb</artifactId>
     <name>RemoteLightWeb</name>
-    <version>1.0-SNAPSHOT1</version>
+    <version>1.0-SNAPSHOT2</version>
     <packaging>jar</packaging>
 
     <properties>
@@ -130,9 +130,9 @@
         	<artifactId>vaadin-rich-text-editor-flow</artifactId>
         </dependency>
         <dependency>
-        	<groupId>lars</groupId>
+        	<groupId>de.lars</groupId>
         	<artifactId>remotelight</artifactId>
-        	<version>7</version>
+        	<version>0.2.0.7</version>
         </dependency>
     </dependencies>
 

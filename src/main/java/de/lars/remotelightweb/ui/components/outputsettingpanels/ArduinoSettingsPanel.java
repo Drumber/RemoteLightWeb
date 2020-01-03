@@ -11,12 +11,14 @@ import com.vaadin.flow.component.textfield.TextField;
 
 import de.lars.remotelightclient.devices.arduino.Arduino;
 import de.lars.remotelightclient.devices.arduino.ComPort;
+import de.lars.remotelightclient.devices.arduino.RgbOrder;
 
 public class ArduinoSettingsPanel extends OutputSettingsPanel {
 	
 	private Arduino arduino;
 	private TextField fieldName;
 	private ComboBox<String> boxComPort;
+	private ComboBox<RgbOrder> boxOrder;
 	private IntegerField fieldPixels;
 
 	public ArduinoSettingsPanel(Arduino arduino, boolean setup) {
@@ -33,6 +35,10 @@ public class ArduinoSettingsPanel extends OutputSettingsPanel {
 		fieldPixels.setMin(1);
 		fieldPixels.setStep(1);
 		addFormItem(fieldPixels, "Pixels");
+		
+		boxOrder = new ComboBox<>();
+		boxOrder.setItems(RgbOrder.values());
+		addFormItem(boxOrder, "RGB order");
 		
 		setValues();
 	}
@@ -58,6 +64,11 @@ public class ArduinoSettingsPanel extends OutputSettingsPanel {
 			arduino.setPixels(1);
 		}
 		fieldPixels.setValue(arduino.getPixels());
+		
+		if(arduino.getRgbOrder() == null) {
+			arduino.setRgbOrder(RgbOrder.GRB);
+		}
+		boxOrder.setValue(arduino.getRgbOrder());
 	}
 
 	
