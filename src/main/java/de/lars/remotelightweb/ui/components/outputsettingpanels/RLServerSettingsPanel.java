@@ -27,6 +27,8 @@ public class RLServerSettingsPanel extends OutputSettingsPanel {
 		fieldPixels.setStep(1);
 		addFormItem(fieldPixels, "Pixels");
 		
+		add(new OutputPatchPanel(rlServer, fieldPixels), 3);
+		
 		setValues();
 	}
 	

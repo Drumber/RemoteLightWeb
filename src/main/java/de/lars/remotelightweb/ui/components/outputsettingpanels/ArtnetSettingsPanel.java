@@ -69,6 +69,8 @@ public class ArtnetSettingsPanel extends OutputSettingsPanel {
 		});
 		addFormItem(fieldPixels, "Pixels");
 		
+		add(new OutputPatchPanel(artnet, fieldPixels), 3);
+		
 		setValues();
 	}
 	

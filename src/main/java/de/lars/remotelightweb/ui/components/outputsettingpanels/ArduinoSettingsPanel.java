@@ -40,6 +40,8 @@ public class ArduinoSettingsPanel extends OutputSettingsPanel {
 		boxOrder.setItems(RgbOrder.values());
 		addFormItem(boxOrder, "RGB order");
 		
+		add(new OutputPatchPanel(arduino, fieldPixels), 3);
+		
 		setValues();
 	}
 	
