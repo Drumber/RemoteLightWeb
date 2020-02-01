@@ -19,8 +19,10 @@ public class ConfigFile {
 	
 	public ConfigFile() {
 		// copy config file from classpath if not exists
-		if(!new File(RemoteLightWeb.ROOT_FOLDER_NAME + File.separator + CONFIG_FILE_NAME).exists()) {
+		File config = new File(RemoteLightWeb.ROOT_FOLDER_NAME + File.separator + CONFIG_FILE_NAME);
+		if(!config.exists()) {
 			try {
+				config.getParentFile().mkdirs();
 				InputStream input = getClass().getClassLoader().getResourceAsStream(CONFIG_CLASSPATH);
 				Files.copy(input, new File(RemoteLightWeb.ROOT_FOLDER_NAME + File.separator + CONFIG_FILE_NAME).toPath());
 			} catch (IOException e) {

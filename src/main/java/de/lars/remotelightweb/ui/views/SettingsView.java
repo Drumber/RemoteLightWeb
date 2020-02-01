@@ -22,7 +22,9 @@ import de.lars.remotelightclient.settings.SettingsManager;
 import de.lars.remotelightclient.settings.SettingsManager.SettingCategory;
 import de.lars.remotelightclient.settings.types.SettingSelection;
 import de.lars.remotelightweb.RemoteLightWeb;
+import de.lars.remotelightweb.backend.utils.UpdateUtil;
 import de.lars.remotelightweb.ui.MainLayout;
+import de.lars.remotelightweb.ui.components.UpdateDialog;
 import de.lars.remotelightweb.ui.components.custom.PaperSlider;
 import de.lars.remotelightweb.ui.components.settingpanels.SettingPanel;
 import de.lars.remotelightweb.ui.utils.SettingPanelUtil;
@@ -51,6 +53,12 @@ public class SettingsView extends VerticalLayout {
 			Main.getInstance().getSettingsManager().getSettingObject("out.brightness").setValue(brightness.getValue());
 		});
 		add(new Label("Brightness"), brightness);
+		
+		add(new Button("Check for updates", e -> {
+			UpdateUtil updater = RemoteLightWeb.getInstance().getUpdateUtil();
+			updater.check();
+			new UpdateDialog(updater.getParser()).open();;
+		}));
 		
 		Button close = new Button("Shutdown");
 		add(close);

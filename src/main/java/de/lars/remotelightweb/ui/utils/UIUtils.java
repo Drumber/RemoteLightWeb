@@ -1,5 +1,7 @@
 package de.lars.remotelightweb.ui.utils;
 
+import com.vaadin.flow.component.ClickEvent;
+import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.icon.VaadinIcon;
@@ -32,6 +34,12 @@ public class UIUtils {
 	public static Button createButton(String text, String marginArg) {
 		Button button = new Button(text);
 		button.getStyle().set("margin", marginArg);
+		return button;
+	}
+	
+	public static Button createButton(String text, String marginArg, ComponentEventListener<ClickEvent<Button>> listener) {
+		Button button = createButton(text, marginArg);
+		button.addClickListener(listener);
 		return button;
 	}
 	

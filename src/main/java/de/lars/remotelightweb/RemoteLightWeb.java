@@ -1,5 +1,6 @@
 package de.lars.remotelightweb;
 
+import java.io.File;
 import java.io.InputStream;
 import java.nio.file.Paths;
 import java.util.Properties;
@@ -8,10 +9,16 @@ import javax.annotation.PreDestroy;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.web.servlet.error.ErrorMvcAutoConfiguration;
+import org.springframework.boot.system.ApplicationHome;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 import org.springframework.context.ConfigurableApplicationContext;
 import de.lars.remotelightclient.api.RemoteLightAPI;
+import de.lars.remotelightclient.settings.SettingsManager;
+import de.lars.remotelightclient.settings.SettingsManager.SettingCategory;
+import de.lars.remotelightclient.settings.types.SettingBoolean;
+import de.lars.remotelightclient.settings.types.SettingString;
 import de.lars.remotelightweb.backend.ConfigFile;
+import de.lars.remotelightweb.backend.utils.UpdateUtil;
 
 /**
  * The entry point of the Spring Boot application.
@@ -25,6 +32,7 @@ public class RemoteLightWeb extends SpringBootServletInitializer {
 	private static ConfigurableApplicationContext context;
 	private static RemoteLightWeb instance;
 	private RemoteLightAPI rlApi;
+	private UpdateUtil updateUtil;
 	private boolean closing;
 	
     public static void main(String[] args) {
@@ -39,6 +47,8 @@ public class RemoteLightWeb extends SpringBootServletInitializer {
 		RemoteLightAPI.setRootDirectory(Paths.get(".").toAbsolutePath().normalize().toString());	// directory where the jar was executed
 		RemoteLightAPI.setRootName(ROOT_FOLDER_NAME);
 		rlApi = new RemoteLightAPI();
+		updateUtil = new UpdateUtil(VERSION);
+		setup();	// initial some settings and check for updates
 	}
     
     
@@ -92,6 +102,27 @@ public class RemoteLightWeb extends SpringBootServletInitializer {
 		} catch (Exception e) {
 		}
 		return "?";
+    }
+    
+    public UpdateUtil getUpdateUtil() {
+    	return updateUtil;
+    }
+    
+    private void setup() {
+    	SettingsManager s = getAPI().getSettingsManager();
+    	// disable standard updater
+    	((SettingBoolean) s.getSettingFromId("main.checkupdates")).setValue(false);
+    	// add RemoteLightWeb updater setting
+    	s.addSetting(new SettingBoolean("rlweb.updater", "Updater", SettingCategory.General, "Check for updates at startup", true));
+    	
+		File jarDir = new ApplicationHome(RemoteLightWeb.class).getSource();
+    	String runCommand = "java -jar " + jarDir.getAbsolutePath();
+    	s.addSetting(new SettingString("rlweb.runcmd", "Run command after update", SettingCategory.Others, "This command is executed after an update", runCommand));
+    	
+    	// check for updates
+    	if(((SettingBoolean) s.getSettingFromId("rlweb.updater")).getValue() && !VERSION.equals("?")) {
+    		updateUtil.check();
+    	}
     }
 
 }
