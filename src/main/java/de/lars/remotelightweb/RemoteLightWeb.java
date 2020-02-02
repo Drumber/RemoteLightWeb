@@ -118,6 +118,7 @@ public class RemoteLightWeb extends SpringBootServletInitializer {
 		File jarDir = new ApplicationHome(RemoteLightWeb.class).getSource();
     	String runCommand = "java -jar " + jarDir.getAbsolutePath();
     	s.addSetting(new SettingString("rlweb.runcmd", "Run command after update", SettingCategory.Others, "This command is executed after an update", runCommand));
+    	s.addSetting(new SettingBoolean("rlweb.updater.screen", "Start updater in new screen (only Linux)", SettingCategory.Others, "Start updater in a new screen (needs screen installed)", false));
     	
     	// check for updates
     	if(((SettingBoolean) s.getSettingFromId("rlweb.updater")).getValue() && !VERSION.equals("?")) {

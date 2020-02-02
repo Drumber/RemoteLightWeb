@@ -1,13 +1,12 @@
 package de.lars.remotelightweb.backend.utils;
 
 import java.io.File;
-import java.net.URL;
-import java.net.URLDecoder;
 import java.nio.file.Paths;
 
 import org.springframework.boot.system.ApplicationHome;
 import org.tinylog.Logger;
 
+import de.lars.remotelightclient.settings.types.SettingBoolean;
 import de.lars.remotelightclient.settings.types.SettingString;
 import de.lars.remotelightclient.utils.DirectoryUtil;
 import de.lars.remotelightweb.RemoteLightWeb;
@@ -45,6 +44,7 @@ public class UpdateUtil {
 	 */
 	public void install(boolean shutdown) throws Exception {
 		File jarDir = new ApplicationHome(RemoteLightWeb.class).getSource();
+		boolean linux = System.getProperty("os.name").toLowerCase().contains("linux");
 		
 		String rootDir = DirectoryUtil.getRootPath();
 		rootDir = Paths.get(".").toAbsolutePath().normalize().toString();
@@ -57,17 +57,31 @@ public class UpdateUtil {
 					"\" -u " + API_URL + " -w -cmd \"";
 		
 		if(shutdown) {
-			args += "\"shutdown -h now\"";
+			args += "shutdown -h now";
 		} else {
 			String runCmd = ((SettingString) RemoteLightWeb.getInstance().getAPI().getSettingsManager().getSettingFromId("rlweb.runcmd")).getValue();
 			if(runCmd == null || runCmd.isEmpty()) {
-				runCmd = "\"java -jar " + jarDir.getAbsolutePath() + "\"";
+				runCmd = "nothing";
 			}
 			args += runCmd;
 		}
 		args += "\"";
 		
-		String command = String.format("java -jar %s %s", updaterFile.getAbsoluteFile(), args);
+		String command;
+		if(linux) {
+			if(((SettingBoolean) RemoteLightWeb.getInstance().getAPI().getSettingsManager().getSettingFromId("rlweb.updater.screen")).getValue()) {
+				command = String.format("screen -dm -S rlwupdater sudo java -jar %s %s", updaterFile.getAbsoluteFile(), args);	// run updater in new screen
+			} else {
+				command = String.format("sudo java -jar %s %s", updaterFile.getAbsoluteFile(), args);
+			}
+		} else {
+			command = String.format("java -jar %s %s", updaterFile.getAbsoluteFile(), args);
+		}
+		
+		if(linux) {
+			command = "nohup " + command + " &";	// run in background process
+		}
+		
 		Logger.info("Run Updater with the following command: " + command);
 		Runtime.getRuntime().exec(command);
 		
