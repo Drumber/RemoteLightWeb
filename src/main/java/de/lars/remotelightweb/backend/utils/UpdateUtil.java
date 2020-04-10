@@ -1,6 +1,7 @@
 package de.lars.remotelightweb.backend.utils;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Paths;
 
 import org.springframework.boot.system.ApplicationHome;
@@ -70,20 +71,31 @@ public class UpdateUtil {
 		String command;
 		if(linux) {
 			if(((SettingBoolean) RemoteLightWeb.getInstance().getAPI().getSettingsManager().getSettingFromId("rlweb.updater.screen")).getValue()) {
-				command = String.format("screen -dm -S rlwupdater sudo java -jar %s %s", updaterFile.getAbsoluteFile(), args);	// run updater in new screen
+				command = String.format("screen -dm -S rlwupdater java -jar %s %s", updaterFile.getAbsoluteFile(), args);	// run updater in new screen
 			} else {
-				command = String.format("sudo java -jar %s %s", updaterFile.getAbsoluteFile(), args);
+				command = String.format("java -jar %s %s", updaterFile.getAbsoluteFile(), args);
 			}
 		} else {
 			command = String.format("java -jar %s %s", updaterFile.getAbsoluteFile(), args);
 		}
 		
+		String[] cmd;
 		if(linux) {
-			command = "nohup " + command + " &";	// run in background process
+			//command = "nohup " + command + " &";	// run in background process
+			// thanks <3 https://stackoverflow.com/a/13909628/12821118
+			cmd = new String[] {"/bin/sh", "-c", command + " > /dev/null 2>&1 &"};
+		} else {
+			cmd = new String[] {command};
 		}
 		
-		Logger.info("Run Updater with the following command: " + command);
-		Runtime.getRuntime().exec(command);
+		Logger.info("Run Updater with the following command: " + String.join(" ", cmd));
+		try {
+			Runtime.getRuntime().exec(cmd);
+		} catch(Exception e) {
+			System.out.println("Error while executing command " + String.join(" ", cmd));
+			e.printStackTrace();
+			Logger.error(e);
+		}
 		
 		RemoteLightWeb.exitApplication();
 	}
