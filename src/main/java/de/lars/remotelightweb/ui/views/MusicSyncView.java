@@ -6,12 +6,14 @@ import java.util.List;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Mixer;
 
+import com.github.appreciated.card.Card;
 import com.github.appreciated.layout.AreaLayout;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.FlexLayout;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.radiobutton.RadioButtonGroup;
 import com.vaadin.flow.router.PageTitle;
@@ -32,11 +34,12 @@ import de.lars.remotelightweb.ui.MainLayout;
 import de.lars.remotelightweb.ui.components.custom.PaperSlider;
 import de.lars.remotelightweb.ui.components.settingpanels.SettingPanel;
 import de.lars.remotelightweb.ui.utils.SettingPanelUtil;
+import de.lars.remotelightweb.ui.utils.UIUtils;
 
 @CssImport("./styles/musicsync-view-style.css")
 @PageTitle("MusicSync")
 @Route(value = "musicsync", layout = MainLayout.class)
-public class MusicSyncView extends VerticalLayout {
+public class MusicSyncView extends FlexLayout {
 	private final String CLASS_NAME = "musicsync-view";
 	
 	private SettingsManager sm = RemoteLightWeb.getInstance().getAPI().getSettingsManager();
@@ -59,31 +62,35 @@ public class MusicSyncView extends VerticalLayout {
 		layoutEffects = new FlexLayout();
 		layoutEffects.addClassName(CLASS_NAME + "__effects");
 		layoutEffects.setHeightFull();
+		layoutEffects.getStyle().set("overflow", "auto");
+		layoutEffects.getStyle().set("padding", "10px");
 		
 		layoutEffectOptions = new VerticalLayout();
 		layoutEffectOptions.addClassName(CLASS_NAME + "__options");
-		layoutEffectOptions.setHeightFull();
+		layoutEffectOptions.getStyle().set("flex-basis", "50%");
+		layoutEffectOptions.getStyle().set("flex-grow", "1");
 		
 		layoutSettings = new VerticalLayout();
 		layoutSettings.addClassName(CLASS_NAME + "__options");
-		layoutSettings.setHeightFull();
+		layoutSettings.getStyle().set("flex-basis", "50%");
+		layoutSettings.getStyle().set("flex-grow", "1");
 	}
 	
 	private void initLayout() {
-		AreaLayout layout = new AreaLayout(new String[][] {
-        	new String[] {"content"},
-        	new String[] {"content"},
-        	new String[] {"content"},
-        	new String[] {"content"},
-        	new String[] {"options"},
-        	new String[] {"settings"}
-        }).withItemAtArea(layoutEffects, "content")
-        		.withItemAtArea(layoutSettings, "settings")
-        		.withItemAtArea(layoutEffectOptions, "options");
-        layout.setHeightFull();
-        getStyle().set("overflow", "auto");
+		FlexLayout innerLayout = new FlexLayout(layoutEffectOptions, layoutSettings);
+		innerLayout.getStyle().set("flex-wrap", "wrap");
+		innerLayout.getStyle().set("flex-direction", "row-reverse");
+		innerLayout.getStyle().set("overflow", "auto");
+		innerLayout.setSizeFull();
+		Card card = new Card(innerLayout);
+		card.getStyle().set("margin", "10px");
+		card.getStyle().set("max-height", "40%");
+		//UIUtils.configureCard(card);
+        
+		add(layoutEffects, card);
+		getStyle().set("flex-flow", "column");
         setHeightFull();
-        add(layout);
+        setFlexGrow(1, layoutEffects);
 	}
 	
 	
@@ -103,7 +110,7 @@ public class MusicSyncView extends VerticalLayout {
 		
 		PaperSlider adjustment = new PaperSlider();
 		adjustment.setMin(50);
-		adjustment.setMax(900);
+		adjustment.setMax(1200);
 		adjustment.setValue((int) sm.getSettingObject("musicsync.adjustment").getValue());
 		adjustment.addValueChangeListener(e -> {
 			sm.getSettingObject("musicsync.adjustment").setValue(adjustment.getValue());
@@ -120,6 +127,7 @@ public class MusicSyncView extends VerticalLayout {
 		for(MusicEffect m : msm.getMusicEffects()) {
 			Button button = new Button(m.getDisplayname());
 			button.addClassName(CLASS_NAME + "__buttons");
+			button.getElement().setProperty("title", m.getDisplayname());
 			
 			if(msm.getActiveEffect() != null && msm.getActiveEffect().getName().equals(m.getName())) {
 				button.getStyle().set("border-style", "dashed");

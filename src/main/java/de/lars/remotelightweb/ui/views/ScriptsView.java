@@ -4,8 +4,9 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
-import com.github.appreciated.layout.AreaLayout;
+import com.github.appreciated.card.Card;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.contextmenu.ContextMenu;
 import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.formlayout.FormLayout;
@@ -33,7 +34,7 @@ import de.lars.remotelightweb.ui.utils.UIUtils;
 @CssImport("./styles/scripts-view-style.css")
 @PageTitle("Scripts")
 @Route(value = "scripts", layout = MainLayout.class)
-public class ScriptsView extends VerticalLayout {
+public class ScriptsView extends FlexLayout {
 	private final String CLASS_NAME = "scripts-view";
 	
 	private SettingsManager sm = RemoteLightWeb.getInstance().getAPI().getSettingsManager();
@@ -63,29 +64,28 @@ public class ScriptsView extends VerticalLayout {
 		layoutScripts = new FlexLayout();
 		layoutScripts.addClassName(CLASS_NAME + "__scripts");
 		layoutScripts.setHeightFull();
+		layoutScripts.getStyle().set("overflow", "auto");
+		layoutScripts.getStyle().set("padding", "10px");
 		
 		layoutSpeed = new FormLayout();
 		editDiv = new Div();
 		editDiv.add(UIUtils.addMargin(new Button("Edit script", e -> openEditDialog(luaManager.getActiveLuaScriptPath())), "5px 5px"));
 		editDiv.add(UIUtils.addMargin(new Button("Add script", e -> addScript()), "5px 5px"));
-		//editDiv.add(UIUtils.addMargin(new Button("Delete script", e -> deleteScript(luaManager.getActiveLuaScriptPath())), "5px 5px"));
-		// TODO not working because the file is opened by Java RE
 	}
 	
 	private void initLayout() {
-		AreaLayout layout = new AreaLayout(new String[][] {
-        	new String[] {"content"},
-        	new String[] {"content"},
-        	new String[] {"content"},
-        	new String[] {"speed"},
-        	new String[] {"edit"}
-        }).withItemAtArea(layoutScripts, "content")
-        		.withItemAtArea(layoutSpeed, "speed")
-        		.withItemAtArea(editDiv, "edit");
-        layout.setHeightFull();
-        getStyle().set("overflow", "auto");
+		VerticalLayout innerLayout = new VerticalLayout(layoutSpeed, editDiv);
+		innerLayout.setSizeFull();
+		innerLayout.getStyle().set("overflow", "auto");
+		Card card = new Card(innerLayout);
+		card.getStyle().set("margin", "10px");
+		card.getStyle().set("max-height", "40%");
+		//UIUtils.configureCard(card);
+        
+		add(layoutScripts, card);
+		getStyle().set("flex-flow", "column");
         setHeightFull();
-        add(layout);
+        setFlexGrow(1, layoutScripts);
 	}
 	
 	private void initSpeedFooter() {
@@ -98,7 +98,7 @@ public class ScriptsView extends VerticalLayout {
 			sm.getSettingObject("scripts.speed").setValue(e.getValue());
 			luaManager.setDelay(e.getValue());
 		});
-		layoutSpeed.addFormItem(slider, "Speed");
+		layoutSpeed.addFormItem(slider, "Speed").getStyle().set("display", "inline");
 	}
 	
 	
@@ -108,9 +108,11 @@ public class ScriptsView extends VerticalLayout {
 			
 			Button button = new Button(DirectoryUtil.getFileName(script));
 			button.addClassName(CLASS_NAME + "__buttons");
+			button.getElement().setProperty("title", button.getText());
 			button.addClickListener(e -> {
 				toggleScript(script.getAbsolutePath());
 			});
+			addContextMenu(button, script.getAbsolutePath());
 			
 			if(luaManager.getActiveLuaScriptPath() != null && luaManager.getActiveLuaScriptPath().equals(script.getAbsolutePath())) {
 				button.getStyle().set("border-style", "dashed");
@@ -130,6 +132,18 @@ public class ScriptsView extends VerticalLayout {
 			Thread.sleep(5);
 		} catch (InterruptedException e1) {}
 		addScriptsToPanel();
+	}
+	
+	
+	// add right click menu to button
+	private void addContextMenu(Button button, String scriptPath) {
+		ContextMenu contextMenu = new ContextMenu(button);
+		contextMenu.addItem("Edit", e -> {
+			openEditDialog(scriptPath);
+		});
+		contextMenu.addItem("Delete", e -> {
+			deleteScript(scriptPath);
+		});
 	}
 	
 	
@@ -170,7 +184,7 @@ public class ScriptsView extends VerticalLayout {
 		area.setValue(script);
 		dialog.add(area);
 		
-		dialog.add(new Button("Cancel", e -> dialog.close()));
+		Button cancel = UIUtils.addMargin(new Button("Cancel", e -> dialog.close()), "5px 5px");
 		Button save = new Button("Save", e -> {
 			try {
 				FileEditor.writeStringToFile(filePath, area.getValue());
@@ -179,7 +193,8 @@ public class ScriptsView extends VerticalLayout {
 				Notification.show("Could not save script: " + e1.getMessage());
 			}
 		});
-		dialog.add(save);
+		save.getStyle().set("margin", "5px 5px");
+		dialog.add(UIUtils.addStyle(new Div(cancel, save), "float", "right"));
 		dialog.open();
 	}
 	
@@ -188,7 +203,7 @@ public class ScriptsView extends VerticalLayout {
 		TextField name = new TextField("Script name");
 		dialog.add(name);
 		
-		dialog.add(new Button("Cancel", e -> dialog.close()));
+		dialog.add(UIUtils.addMargin(new Button("Cancel", e -> dialog.close()), "5px 5px"));
 		Button add = new Button("Add", e -> {
 			if(name.getValue().isEmpty()) {
 				name.setErrorMessage("Please enter a name.");
@@ -208,10 +223,12 @@ public class ScriptsView extends VerticalLayout {
 				Notification.show("Could not create file: " + e1.getMessage());
 			}
 		});
+		add.getStyle().set("margin", "5px 5px");
 		dialog.add(add);
 		dialog.open();
 	}
 	
+	// TODO not working because the file is opened by Java RE
 	private void deleteScript(String filePath) {
 		if(filePath == null || filePath.isEmpty()) {
 			Notification.show("No script selected!");
@@ -221,19 +238,21 @@ public class ScriptsView extends VerticalLayout {
 		
 		Dialog dialog = new Dialog();
 		VerticalLayout layout = new VerticalLayout();
+		layout.setPadding(false);
 		layout.add(new Label("Are you sure you want to delete '" + filePath + "'?"));
 		
 		Button delete = new Button("Delete", e -> {
 			boolean rmvd = FileEditor.deleteFile(filePath);
+			luaManager.scanLuaScripts(DirectoryUtil.getLuaPath()); // update scripts list
 			addScriptsToPanel();
 			Notification.show(rmvd ? "Script successfully deleted!" : "Could not delete script!");
 			dialog.close();
 		});
 		Button cancel = new Button("Cancel", e -> dialog.close());
-		delete.getStyle().set("margin", "5px 5px");
-		cancel.getStyle().set("margin", "5px 5px");
+		delete.getStyle().set("margin", "2px 2px");
+		cancel.getStyle().set("margin", "2px 2px");
 		
-		layout.add(new Div(cancel, delete));
+		layout.add(UIUtils.addStyle(new Div(cancel, delete), "margin-left", "auto"));
 		dialog.add(layout);
 		dialog.open();
 	}

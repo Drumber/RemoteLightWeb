@@ -48,6 +48,23 @@ public class PaperSlider extends AbstractSinglePropertyField<PaperSlider, Intege
     	getElement().setProperty("max", max);
     }
     
+    public void setKnobColor(String color) {
+    	getElement().getStyle().set("--paper-slider-knob-color", color);
+    }
+    
+    public void setActiveColor(String color) {
+    	getElement().getStyle().set("--paper-slider-active-color", color);
+    }
+    
+    public void setSecondaryColor(String color) {
+    	getElement().getStyle().set("--paper-slider-secondary-color", color);
+    }
+    
+    public void setSnap(boolean snap, int step) {
+    	getElement().setProperty("snaps", snap);
+    	getElement().setProperty("step", step);
+    }
+    
     public Registration addClickListener(ComponentEventListener<ClickEvent> listener) {
         return addListener(ClickEvent.class, listener);
     }

@@ -1,10 +1,13 @@
 package de.lars.remotelightweb.ui.views;
 
-import com.github.appreciated.layout.AreaLayout;
+import com.github.appreciated.card.Card;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.contextmenu.ContextMenu;
 import com.vaadin.flow.component.dependency.CssImport;
+import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.html.H3;
+import com.vaadin.flow.component.html.H5;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.FlexLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -19,6 +22,7 @@ import de.lars.remotelightclient.devices.artnet.Artnet;
 import de.lars.remotelightclient.devices.link.chain.Chain;
 import de.lars.remotelightclient.devices.remotelightserver.RemoteLightServer;
 import de.lars.remotelightclient.out.OutputManager;
+import de.lars.remotelightclient.utils.OutputUtil;
 import de.lars.remotelightweb.RemoteLightWeb;
 import de.lars.remotelightweb.ui.MainLayout;
 import de.lars.remotelightweb.ui.components.outputsettingpanels.ArduinoSettingsPanel;
@@ -30,14 +34,15 @@ import de.lars.remotelightweb.ui.components.outputsettingpanels.RLServerSettings
 @CssImport("./styles/main-view-style.css")
 @PageTitle("Outputs")
 @Route(value = "", layout = MainLayout.class)
-public class MainView extends VerticalLayout {
+public class MainView extends FlexLayout {
 	private static final String CLASS_NAME = "main-view";
 	
 	private DeviceManager dm = RemoteLightWeb.getInstance().getAPI().getDeviceManager();
 	private OutputManager om = RemoteLightWeb.getInstance().getAPI().getOutputManager();
 	private FlexLayout layoutOutputs;
 	private VerticalLayout layoutOptions;
-	private ContextMenu contextMenu;
+	private ContextMenu contextMenuAdd;
+	private Card cardOptions;
 
 	public MainView() {
 		initComponents();
@@ -50,31 +55,35 @@ public class MainView extends VerticalLayout {
 		layoutOutputs = new FlexLayout();
 		layoutOutputs.addClassName(CLASS_NAME + "__outputs");
 		layoutOutputs.setHeightFull();
+		layoutOutputs.getStyle().set("overflow", "auto");
+		layoutOutputs.getStyle().set("padding", "10px");
 		
 		layoutOptions = new VerticalLayout();
 		layoutOptions.setHeightFull();
+		layoutOptions.setPadding(false);
 		layoutOptions.addClassName(CLASS_NAME + "__options");
 		
-		contextMenu = new ContextMenu();
-		contextMenu.setOpenOnClick(true);
-		contextMenu.addItem("Arduino", e -> showOutputSettings(new Arduino(null, null), true));
-		contextMenu.addItem("RLServer", e -> showOutputSettings(new RemoteLightServer(null, null), true));
-		contextMenu.addItem("Artnet", e -> showOutputSettings(new Artnet(null), true));
-		contextMenu.addItem("Chain", e -> showOutputSettings(new Chain(null), true));
+		contextMenuAdd = new ContextMenu();
+		contextMenuAdd.setOpenOnClick(true);
+		contextMenuAdd.addItem("Arduino", e -> showOutputSettings(new Arduino(null, null), true));
+		contextMenuAdd.addItem("RLServer", e -> showOutputSettings(new RemoteLightServer(null, null), true));
+		contextMenuAdd.addItem("Artnet", e -> showOutputSettings(new Artnet(null), true));
+		contextMenuAdd.addItem("Chain", e -> showOutputSettings(new Chain(null), true));
 	}
 	
 	private void initLayout() {
-		AreaLayout layout = new AreaLayout(new String[][] {
-        	new String[] {"content"},
-        	new String[] {"content"},
-        	new String[] {"content"},
-        	new String[] {"footer"}
-        }).withItemAtArea(layoutOutputs, "content")
-        		.withItemAtArea(layoutOptions, "footer");
-        layout.setHeightFull();
-        getStyle().set("overflow", "auto");
+        VerticalLayout innerLayout = new VerticalLayout(layoutOptions);
+		innerLayout.setSizeFull();
+		cardOptions = new Card(innerLayout);
+		cardOptions.setVisible(false);
+		cardOptions.getStyle().set("margin", "10px");
+		cardOptions.getStyle().set("max-height", "50%");
+		//UIUtils.configureCard(card);
+        
+		add(layoutOutputs, cardOptions);
+		getStyle().set("flex-flow", "column");
         setHeightFull();
-        add(layout);
+        setFlexGrow(1, layoutOutputs);
 	}
 	
 	
@@ -97,6 +106,7 @@ public class MainView extends VerticalLayout {
 			Button btn = new Button(d.getId());
 			btn.addClassName(CLASS_NAME + "__panels");
 			btn.addClickListener(e -> deviceClicked(d));
+			addContextMenu(btn, d);
 			layoutOutputs.add(btn);
 			
 			if(om.getActiveOutput() != null && om.getActiveOutput() == d && d.getConnectionState() == ConnectionState.CONNECTED) {
@@ -107,12 +117,27 @@ public class MainView extends VerticalLayout {
 		
 		Button add = new Button("Add");
 		add.addClassName(CLASS_NAME + "__panels");
-		contextMenu.setTarget(add);
+		contextMenuAdd.setTarget(add);
 		layoutOutputs.add(add);
 	}
 	
 	private void deviceClicked(Device d) {
 		showOutputSettings(d, false);
+	}
+	
+	// add right click menu to button
+	private void addContextMenu(Button button, Device d) {
+		ContextMenu contextMenu = new ContextMenu(button);
+		contextMenu.addItem((om.getActiveOutput() == d && d.getConnectionState() == ConnectionState.CONNECTED)
+					? "Deactivate" : "Activate", e -> {
+						toggleOutput(d);
+					});
+		contextMenu.addItem("Edit", e -> {
+			showOutputSettings(d, false);
+		});
+		contextMenu.addItem("Remove", e -> {
+			removeOutput(d);
+		});
 	}
 	
 	
@@ -131,6 +156,7 @@ public class MainView extends VerticalLayout {
 		
 		if(panel != null) {
 			layoutOptions.removeAll();
+			cardOptions.setVisible(true);
 			layoutOptions.add(getOutputSettingsBgr(panel, setup));
 		}
 	}
@@ -138,6 +164,9 @@ public class MainView extends VerticalLayout {
 	private Component getOutputSettingsBgr(OutputSettingsPanel panel, boolean setup) {
 		VerticalLayout layout = new VerticalLayout();
 		layout.setHeightFull();
+		layout.setPadding(false);
+		panel.getStyle().set("max-width", "1000px");
+		
 		FlexLayout buttonLay = new FlexLayout();
 		buttonLay.getStyle().set("flex-wrap", "wrap");
 		buttonLay.getStyle().set("align-content", "flex-start");
@@ -153,14 +182,19 @@ public class MainView extends VerticalLayout {
 			buttonLay.add(remove);
 			
 			Button activate = new Button( (om.getActiveOutput() == panel.getDevice() && panel.getDevice().getConnectionState() == ConnectionState.CONNECTED)
-					? "Deactivate" : "Activate", e -> activateOutput(panel));
+					? "Deactivate" : "Activate", e -> toggleOutput(panel));
 			buttonLay.add(activate);
 		}
 		
 		for(int i = 0; i < buttonLay.getComponentCount(); i++)
 			((Button) buttonLay.getComponentAt(i)).getStyle().set("margin", "5px 5px");
 		
-		layout.add(panel);
+		H5 title = new H5("Configuration " + panel.getDevice().getId() + String.format(" (%s)", OutputUtil.getOutputTypeAsString(panel.getDevice())));
+		
+		Div parentOptions = new Div(title, panel);
+		parentOptions.setSizeFull();
+		parentOptions.getStyle().set("overflow", "auto");
+		layout.add(parentOptions);
 		layout.add(buttonLay);
 		return layout;
 	}
@@ -197,22 +231,36 @@ public class MainView extends VerticalLayout {
 	
 	
 	private void removeOutput(OutputSettingsPanel panel) {
+		if(panel.isSetup()) {
+			Notification.show("Could not remove output! Output is not configured.");
+			return;
+		}
 		Device device = panel.getDevice();
-		if(!panel.isSetup() && dm.isIdUsed(device.getId())) {
+		removeOutput(device);
+	}
+	
+	private void removeOutput(Device device) {
+		if(dm.isIdUsed(device.getId())) {
 			dm.removeDevice(device);
 			addOutputsToLayout();
 			hideSettingsPanel();
 			Notification.show("Output has been removed!");
 		} else {
-			Notification.show("Could not remove output!");
+			Notification.show("Could not remove output! Device not found.");
 		}
 	}
 	
 	
-	private void activateOutput(OutputSettingsPanel panel) {
-		Device device = panel.getDevice();
-		if(!panel.isSetup() && dm.isIdUsed(device.getId())) {
-			
+	private void toggleOutput(OutputSettingsPanel panel) {
+		if(panel.isSetup()) {
+			Notification.show("Please save the output first");
+			return;
+		}
+		toggleOutput(panel.getDevice());
+	}
+	
+	private void toggleOutput(Device device) {
+		if(dm.isIdUsed(device.getId())) {
 			if(device.getConnectionState() == ConnectionState.CONNECTED) {
 				om.deactivate(device);
 			} else {
@@ -229,6 +277,7 @@ public class MainView extends VerticalLayout {
 	
 	private void hideSettingsPanel() {
 		layoutOptions.removeAll();
+		cardOptions.setVisible(false);
 	}
 
 }

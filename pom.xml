@@ -3,7 +3,7 @@
     <groupId>de.lars.remotelightweb</groupId>
     <artifactId>remotelightweb</artifactId>
     <name>RemoteLightWeb</name>
-    <version>1.0.1</version>
+    <version>1.0.2</version>
     <packaging>jar</packaging>
 
     <properties>
@@ -12,7 +12,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
-        <vaadin.version>14.1.2</vaadin.version>
+        <vaadin.version>14.1.5</vaadin.version>
 
         <drivers.dir>${project.basedir}/drivers</drivers.dir>
         <drivers.downloader.phase>pre-integration-test</drivers.downloader.phase>
@@ -132,7 +132,7 @@
         <dependency>
         	<groupId>de.lars</groupId>
         	<artifactId>remotelight</artifactId>
-        	<version>0.2.0.7.2</version>
+        	<version>0.2.0.8.2</version>
         </dependency>
         <dependency>
         	<groupId>de.lars</groupId>

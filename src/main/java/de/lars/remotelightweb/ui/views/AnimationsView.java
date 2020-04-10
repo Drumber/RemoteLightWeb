@@ -2,7 +2,7 @@ package de.lars.remotelightweb.ui.views;
 
 import java.util.List;
 
-import com.github.appreciated.layout.AreaLayout;
+import com.github.appreciated.card.Card;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.formlayout.FormLayout;
@@ -23,11 +23,13 @@ import de.lars.remotelightweb.ui.MainLayout;
 import de.lars.remotelightweb.ui.components.custom.PaperSlider;
 import de.lars.remotelightweb.ui.components.settingpanels.SettingPanel;
 import de.lars.remotelightweb.ui.utils.SettingPanelUtil;
+import de.lars.remotelightweb.ui.utils.UIUtils;
 
 @CssImport("./styles/animations-view-style.css")
+@CssImport("./styles/styles.css")
 @PageTitle("Animations")
 @Route(value = "animations", layout = MainLayout.class)
-public class AnimationsView extends VerticalLayout {
+public class AnimationsView extends FlexLayout {
 	private final String CLASS_NAME = "animations-view";
 	
 	private SettingsManager sm = RemoteLightWeb.getInstance().getAPI().getSettingsManager();
@@ -49,28 +51,27 @@ public class AnimationsView extends VerticalLayout {
 		layoutAnimations = new FlexLayout();
 		layoutAnimations.addClassName(CLASS_NAME + "__animations");
 		layoutAnimations.setHeightFull();
+		layoutAnimations.getStyle().set("overflow", "auto");
+		layoutAnimations.getStyle().set("padding", "10px");
 		
 		layoutOptions = new VerticalLayout();
-		layoutOptions.setHeightFull();
 		layoutOptions.addClassName(CLASS_NAME + "__options");
-		
 		layoutSpeed = new FormLayout();
 	}
 	
 	private void initLayout() {
-		AreaLayout layout = new AreaLayout(new String[][] {
-        	new String[] {"content"},
-        	new String[] {"content"},
-        	new String[] {"content"},
-        	new String[] {"options"},
-        	new String[] {"speed"}
-        }).withItemAtArea(layoutAnimations, "content")
-        		.withItemAtArea(layoutOptions, "options")
-        		.withItemAtArea(layoutSpeed, "speed");
-        layout.setHeightFull();
-        getStyle().set("overflow", "auto");
+		VerticalLayout innerLayout = new VerticalLayout(layoutOptions, layoutSpeed);
+		innerLayout.setSizeFull();
+		innerLayout.getStyle().set("overflow", "auto");
+		Card card = new Card(innerLayout);
+		card.getStyle().set("margin", "10px");
+		card.getStyle().set("max-height", "40%");
+		//UIUtils.configureCard(card);
+        
+		add(layoutAnimations, card);
+		getStyle().set("flex-flow", "column");
         setHeightFull();
-        add(layout);
+        setFlexGrow(1, layoutAnimations);
 	}
 	
 	private void initSpeedFooter() {
@@ -83,7 +84,7 @@ public class AnimationsView extends VerticalLayout {
 			sm.getSettingObject("animations.speed").setValue(e.getValue());
 			am.setDelay(e.getValue());
 		});
-		layoutSpeed.addFormItem(slider, "Speed");
+		layoutSpeed.addFormItem(slider, "Speed").getStyle().set("display", "inline");
 	}
 	
 	
@@ -92,6 +93,7 @@ public class AnimationsView extends VerticalLayout {
 		for(Animation a : am.getAnimations()) {
 			Button button = new Button(a.getDisplayname());
 			button.addClassName(CLASS_NAME + "__buttons");
+			button.getElement().setProperty("title", a.getDisplayname());
 			
 			if(am.getActiveAnimation() != null && am.getActiveAnimation().getName().equals(a.getName())) {
 				button.getStyle().set("border-style", "dashed");

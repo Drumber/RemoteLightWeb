@@ -11,6 +11,9 @@ import com.github.appreciated.app.layout.component.menu.left.items.LeftNavigatio
 import com.github.appreciated.app.layout.component.router.AppLayoutRouterLayout;
 import com.github.appreciated.app.layout.entity.Section;
 import com.vaadin.flow.component.UI;
+import com.vaadin.flow.component.dialog.Dialog;
+import com.vaadin.flow.component.html.H3;
+import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.dom.ThemeList;
@@ -22,6 +25,7 @@ import com.vaadin.flow.theme.lumo.Lumo;
 
 import de.lars.remotelightclient.settings.types.SettingSelection;
 import de.lars.remotelightweb.RemoteLightWeb;
+import de.lars.remotelightweb.ui.components.UpdateDialog;
 import de.lars.remotelightweb.ui.views.AboutView;
 import de.lars.remotelightweb.ui.views.AnimationsView;
 import de.lars.remotelightweb.ui.views.ColorsView;
@@ -30,6 +34,7 @@ import de.lars.remotelightweb.ui.views.MusicSyncView;
 import de.lars.remotelightweb.ui.views.ScenesView;
 import de.lars.remotelightweb.ui.views.ScriptsView;
 import de.lars.remotelightweb.ui.views.SettingsView;
+import de.lars.updater.sites.GitHubParser;
 
 @Route
 @PWA(name = "RemoteLightWeb Control Software", shortName = "RemoteLightWeb")
@@ -52,6 +57,9 @@ public class MainLayout extends AppLayoutRouterLayout<LeftLayouts.LeftResponsive
 		// toggle dark mode
 		String style = ((SettingSelection) RemoteLightWeb.getInstance().getAPI().getSettingsManager().getSettingFromId("ui.style")).getSelected();
 		setDarkMode(style.equalsIgnoreCase("Dark"));
+		
+		// show update notification
+		checkAndShowUpdateDialog();
 	}
 	
 	/**
@@ -121,6 +129,14 @@ public class MainLayout extends AppLayoutRouterLayout<LeftLayouts.LeftResponsive
 	public boolean isDarkModeEnabled() {
 		ThemeList themeList = UI.getCurrent().getElement().getThemeList();
 		return themeList.contains(Lumo.DARK);
+	}
+	
+	
+	public void checkAndShowUpdateDialog() {
+		GitHubParser parser = RemoteLightWeb.getInstance().getUpdateUtil().getParser();
+		if(parser.isNewVersionAvailable() && RemoteLightWeb.getInstance().isUpdateNotifcCooldownOver()) {
+			new UpdateDialog(parser).open();
+		}
 	}
 	
 }

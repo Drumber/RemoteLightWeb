@@ -1,9 +1,11 @@
 package de.lars.remotelightweb.ui.utils;
 
 import com.vaadin.flow.component.ClickEvent;
+import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
+import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.icon.VaadinIcon;
 
 public class UIUtils {
@@ -46,6 +48,19 @@ public class UIUtils {
 	public static Button addMargin(Button button, String marginArg) {
 		button.getStyle().set("margin", marginArg);
 		return button;
+	}
+	
+	public static Div addStyle(Div div, String style, String styleArg) {
+		div.getStyle().set(style, styleArg);
+		return div;
+	}
+	
+	
+	public static void configureCard(Component comp) {
+		comp.getElement().getStyle().set("background-color", "var(--lumo-contrast-5pct)");
+		comp.getElement().getStyle().set("box-shadow", "var(--lumo-box-shadow-s)");
+		comp.getElement().getStyle().set("border-radius", "var(--lumo-border-radius-m)");
+		comp.getElement().getStyle().set("padding", "10px");
 	}
 
 }

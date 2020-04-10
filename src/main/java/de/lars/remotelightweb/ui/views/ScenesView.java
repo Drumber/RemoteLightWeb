@@ -45,6 +45,7 @@ public class ScenesView extends VerticalLayout {
 		for(Scene s : scm.getScenes()) {
 			Button button = new Button(s.getDisplayname());
 			button.addClassName(CLASS_NAME + "__buttons");
+			button.getElement().setProperty("title", s.getDisplayname());
 			
 			if(scm.getActiveScene() != null && scm.getActiveScene().getName().equals(s.getName())) {
 				button.getStyle().set("border-style", "dashed");
