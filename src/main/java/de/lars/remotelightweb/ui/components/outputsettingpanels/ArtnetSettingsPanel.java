@@ -1,10 +1,12 @@
 package de.lars.remotelightweb.ui.components.outputsettingpanels;
 
 import com.vaadin.flow.component.checkbox.Checkbox;
+import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.textfield.IntegerField;
 import com.vaadin.flow.component.textfield.TextField;
 
+import de.lars.remotelightclient.devices.arduino.RgbOrder;
 import de.lars.remotelightclient.devices.artnet.Artnet;
 
 public class ArtnetSettingsPanel extends OutputSettingsPanel {
@@ -13,6 +15,7 @@ public class ArtnetSettingsPanel extends OutputSettingsPanel {
 	private Artnet artnet;
 	private TextField fieldName;
 	private IntegerField fieldPixels;
+	private ComboBox<RgbOrder> boxOrder;
 	private TextField fieldIP;
 	private Checkbox boxBroadcast;
 	private Label lblEndUniverse;
@@ -69,6 +72,10 @@ public class ArtnetSettingsPanel extends OutputSettingsPanel {
 		});
 		addFormItem(fieldPixels, "Pixels");
 		
+		boxOrder = new ComboBox<>();
+		boxOrder.setItems(RgbOrder.values());
+		addFormItem(boxOrder, "RGB order");
+		
 		add(new OutputPatchPanel(artnet, fieldPixels), 3);
 		
 		setValues();
@@ -84,6 +91,11 @@ public class ArtnetSettingsPanel extends OutputSettingsPanel {
 			artnet.setPixels(1);
 		}
 		fieldPixels.setValue(artnet.getPixels());
+		
+		if(artnet.getRgbOrder() == null) {
+			artnet.setRgbOrder(RgbOrder.GRB);
+		}
+		boxOrder.setValue(artnet.getRgbOrder());
 		
 		boxBroadcast.setValue(artnet.isBroadcast());
 		if(artnet.getUnicastAddress() != null) {
@@ -103,6 +115,7 @@ public class ArtnetSettingsPanel extends OutputSettingsPanel {
 		}
 		artnet.setId(fieldName.getValue());
 		artnet.setPixels(fieldPixels.getValue());
+		artnet.setRgbOrder(boxOrder.getValue());
 		artnet.setUnicastAddress(fieldIP.getValue());
 		artnet.setBroadcast(boxBroadcast.getValue());
 		artnet.setSubnet(fieldSubnet.getValue());

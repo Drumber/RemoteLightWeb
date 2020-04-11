@@ -6,7 +6,6 @@ import java.util.List;
 import com.fazecast.jSerialComm.SerialPort;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.textfield.IntegerField;
-import com.vaadin.flow.component.textfield.NumberField;
 import com.vaadin.flow.component.textfield.TextField;
 
 import de.lars.remotelightclient.devices.arduino.Arduino;
@@ -82,6 +81,7 @@ public class ArduinoSettingsPanel extends OutputSettingsPanel {
 		arduino.setId(fieldName.getValue());
 		arduino.setSerialPort(boxComPort.getValue());
 		arduino.setPixels(fieldPixels.getValue());
+		arduino.setRgbOrder(boxOrder.getValue());
 		return true;
 	}
 

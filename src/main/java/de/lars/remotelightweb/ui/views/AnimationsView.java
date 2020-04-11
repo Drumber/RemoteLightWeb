@@ -23,7 +23,6 @@ import de.lars.remotelightweb.ui.MainLayout;
 import de.lars.remotelightweb.ui.components.custom.PaperSlider;
 import de.lars.remotelightweb.ui.components.settingpanels.SettingPanel;
 import de.lars.remotelightweb.ui.utils.SettingPanelUtil;
-import de.lars.remotelightweb.ui.utils.UIUtils;
 
 @CssImport("./styles/animations-view-style.css")
 @CssImport("./styles/styles.css")

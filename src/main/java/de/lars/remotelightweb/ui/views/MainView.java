@@ -6,9 +6,10 @@ import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.contextmenu.ContextMenu;
 import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.html.Div;
-import com.vaadin.flow.component.html.H3;
 import com.vaadin.flow.component.html.H5;
 import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.notification.Notification.Position;
+import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.orderedlayout.FlexLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.PageTitle;
@@ -213,26 +214,26 @@ public class MainView extends FlexLayout {
 					if(dm.addDevice(device)) {
 						addOutputsToLayout();
 						hideSettingsPanel();
-						Notification.show("Output successfully added!");
+						Notification.show("Output successfully added!", 2000, Position.BOTTOM_START);
 					} else {
-						Notification.show("Name/ID is already in use!");
+						Notification.show("Name/ID is already in use!", 3000, Position.BOTTOM_START).addThemeVariants(NotificationVariant.LUMO_ERROR);
 					}
 				} else {
 					addOutputsToLayout();
-					Notification.show("Saved changes.");
+					Notification.show("Saved changes.", 2000, Position.BOTTOM_START);
 				}
 			} else {
-				Notification.show("Name/ID is already in use!");
+				Notification.show("Name/ID is already in use!", 3000, Position.BOTTOM_START).addThemeVariants(NotificationVariant.LUMO_ERROR);
 			}
 		} else {
-			Notification.show("The Name/ID field must not be empty!");
+			Notification.show("The Name/ID field must not be empty!", 3000, Position.BOTTOM_START).addThemeVariants(NotificationVariant.LUMO_ERROR);
 		}
 	}
 	
 	
 	private void removeOutput(OutputSettingsPanel panel) {
 		if(panel.isSetup()) {
-			Notification.show("Could not remove output! Output is not configured.");
+			Notification.show("Could not remove output! Output is not configured.", 3000, Position.BOTTOM_START).addThemeVariants(NotificationVariant.LUMO_ERROR);
 			return;
 		}
 		Device device = panel.getDevice();
@@ -244,16 +245,16 @@ public class MainView extends FlexLayout {
 			dm.removeDevice(device);
 			addOutputsToLayout();
 			hideSettingsPanel();
-			Notification.show("Output has been removed!");
+			Notification.show("Output has been removed!", 2000, Position.BOTTOM_START);
 		} else {
-			Notification.show("Could not remove output! Device not found.");
+			Notification.show("Could not remove output! Device not found.", 3000, Position.BOTTOM_START).addThemeVariants(NotificationVariant.LUMO_ERROR);
 		}
 	}
 	
 	
 	private void toggleOutput(OutputSettingsPanel panel) {
 		if(panel.isSetup()) {
-			Notification.show("Please save the output first");
+			Notification.show("Please save the output first", 3000, Position.BOTTOM_START).addThemeVariants(NotificationVariant.LUMO_ERROR);
 			return;
 		}
 		toggleOutput(panel.getDevice());
@@ -269,7 +270,7 @@ public class MainView extends FlexLayout {
 			addOutputsToLayout();
 			showOutputSettings(device, false);
 			if(device.getConnectionState() == ConnectionState.FAILED) {
-				Notification.show("Could not connect!");
+				Notification.show("Could not connect!", 3000, Position.BOTTOM_START).addThemeVariants(NotificationVariant.LUMO_ERROR);
 			}
 		}
 	}

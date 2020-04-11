@@ -1,8 +1,10 @@
 package de.lars.remotelightweb.ui.components.outputsettingpanels;
 
+import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.textfield.IntegerField;
 import com.vaadin.flow.component.textfield.TextField;
 
+import de.lars.remotelightclient.devices.arduino.RgbOrder;
 import de.lars.remotelightclient.devices.remotelightserver.RemoteLightServer;
 
 public class RLServerSettingsPanel extends OutputSettingsPanel {
@@ -11,6 +13,7 @@ public class RLServerSettingsPanel extends OutputSettingsPanel {
 	private TextField fieldName;
 	private TextField fieldIP;
 	private IntegerField fieldPixels;
+	private ComboBox<RgbOrder> boxOrder;
 
 	public RLServerSettingsPanel(RemoteLightServer rlServer, boolean setup) {
 		super(rlServer, setup);
@@ -26,6 +29,10 @@ public class RLServerSettingsPanel extends OutputSettingsPanel {
 		fieldPixels.setMin(1);
 		fieldPixels.setStep(1);
 		addFormItem(fieldPixels, "Pixels");
+		
+		boxOrder = new ComboBox<>();
+		boxOrder.setItems(RgbOrder.values());
+		addFormItem(boxOrder, "RGB order");
 		
 		add(new OutputPatchPanel(rlServer, fieldPixels), 3);
 		
@@ -44,6 +51,10 @@ public class RLServerSettingsPanel extends OutputSettingsPanel {
 			rlServer.setPixels(1);
 		}
 		fieldPixels.setValue(rlServer.getPixels());
+		if(rlServer.getRgbOrder() == null) {
+			rlServer.setRgbOrder(RgbOrder.GRB);
+		}
+		boxOrder.setValue(rlServer.getRgbOrder());
 	}
 
 	
@@ -55,6 +66,7 @@ public class RLServerSettingsPanel extends OutputSettingsPanel {
 		rlServer.setId(fieldName.getValue());
 		rlServer.setIp(fieldIP.getValue());
 		rlServer.setPixels(fieldPixels.getValue());
+		rlServer.setRgbOrder(boxOrder.getValue());
 		return true;
 	}
 
