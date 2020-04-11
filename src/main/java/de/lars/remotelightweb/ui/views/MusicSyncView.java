@@ -7,15 +7,14 @@ import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Mixer;
 
 import com.github.appreciated.card.Card;
-import com.github.appreciated.layout.AreaLayout;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.FlexLayout;
-import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.radiobutton.RadioButtonGroup;
+import com.vaadin.flow.component.radiobutton.RadioGroupVariant;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 
@@ -34,7 +33,6 @@ import de.lars.remotelightweb.ui.MainLayout;
 import de.lars.remotelightweb.ui.components.custom.PaperSlider;
 import de.lars.remotelightweb.ui.components.settingpanels.SettingPanel;
 import de.lars.remotelightweb.ui.utils.SettingPanelUtil;
-import de.lars.remotelightweb.ui.utils.UIUtils;
 
 @CssImport("./styles/musicsync-view-style.css")
 @PageTitle("MusicSync")
@@ -179,6 +177,7 @@ public class MusicSyncView extends FlexLayout {
 		layoutSettings.add(new Label("Inputs:"));
 		String input = (String) sm.getSettingObject("musicsync.input").getValue();
 		RadioButtonGroup<String> buttonGroup = new RadioButtonGroup<>();
+		buttonGroup.addThemeVariants(RadioGroupVariant.LUMO_VERTICAL);
 		List<String> groupItems = new ArrayList<>();
 		String lastInput = null;
 		

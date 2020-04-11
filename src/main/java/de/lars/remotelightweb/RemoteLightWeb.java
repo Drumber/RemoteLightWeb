@@ -139,10 +139,14 @@ public class RemoteLightWeb extends SpringBootServletInitializer {
     	
 		File jarDir = new ApplicationHome(RemoteLightWeb.class).getSource();
     	String runCommand = "java -jar " + jarDir.getAbsolutePath();
+    	String shutdownCommand = "shutdown.exe -s -t 0";
     	if(System.getProperty("os.name").toLowerCase().contains("linux")) {
-    		runCommand = "nohup sudo " + runCommand + " &";
+    		runCommand = "nohup " + runCommand + " &";
+    		shutdownCommand = "shutdown -h now";
     	}
+    	
     	s.addSetting(new SettingString("rlweb.runcmd", "Run command after update", SettingCategory.Others, "This command is executed after an update", runCommand));
+    	s.addSetting(new SettingString("rlweb.shutdowncmd", "Custom shutdown command", SettingCategory.Others, "Custom shutdown command for shutting down system", shutdownCommand));
     	s.addSetting(new SettingBoolean("rlweb.updater.screen", "Start updater in new screen (only Linux)", SettingCategory.Others, "Start updater in a new screen (needs screen installed)", false));
     	
     	// modify styles setting

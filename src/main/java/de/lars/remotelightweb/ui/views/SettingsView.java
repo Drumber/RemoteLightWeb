@@ -21,6 +21,7 @@ import de.lars.remotelightclient.settings.Setting;
 import de.lars.remotelightclient.settings.SettingsManager;
 import de.lars.remotelightclient.settings.SettingsManager.SettingCategory;
 import de.lars.remotelightclient.settings.types.SettingSelection;
+import de.lars.remotelightclient.settings.types.SettingString;
 import de.lars.remotelightweb.RemoteLightWeb;
 import de.lars.remotelightweb.backend.utils.UpdateUtil;
 import de.lars.remotelightweb.ui.MainLayout;
@@ -60,26 +61,32 @@ public class SettingsView extends VerticalLayout {
 			new UpdateDialog(updater.getParser()).open();;
 		}));
 		
-		Button close = new Button("Shutdown");
-		add(close);
-		close.addClickListener(e -> {
+		Button btnShutdown = new Button("Shutdown");
+		add(btnShutdown);
+		btnShutdown.addClickListener(e -> {
 			Dialog dialog = new Dialog();
 			Button web = new Button("Shutdown RemoteLightWeb", w -> {
 				RemoteLightWeb.exitApplication();
 			});
 			web.getStyle().set("margin", "5px 5px");
 			dialog.add(web);
-			Button pi = new Button("Shutdown System (Raspberry Pi)", p -> {
+			Button system = new Button("Shutdown System", p -> {
 				RemoteLightWeb.getInstance().getAPI().close(false);
 				Runtime runtime = Runtime.getRuntime();
+				
+				String shutdownCmd = ((SettingString) RemoteLightWeb.getInstance().getAPI().getSettingsManager().getSettingFromId("rlweb.shutdowncmd")).getValue();
+				if(shutdownCmd == null || shutdownCmd.isEmpty()) {
+					shutdownCmd = "shutdown -h now";
+				}
+				
 				try {
-					runtime.exec("shutdown -h now");
+					runtime.exec(shutdownCmd);
 				} catch (IOException ex) {
-					Logger.error(ex, "Linux Shutdown >> Could not execute command!");
+					Logger.error(ex, "Shutdown >> Could not execute command!");
 				}
 			});
-			pi.getStyle().set("margin", "5px 5px");
-			dialog.add(pi);
+			system.getStyle().set("margin", "5px 5px");
+			dialog.add(system);
 			dialog.open();
 		});
 	}

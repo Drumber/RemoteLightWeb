@@ -2,7 +2,12 @@ package de.lars.remotelightweb.backend.utils;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.nio.file.attribute.PosixFilePermission;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.springframework.boot.system.ApplicationHome;
 import org.tinylog.Logger;
@@ -18,6 +23,7 @@ public class UpdateUtil {
 	
 	public final String API_URL = "https://api.github.com/repos/Drumber/RemoteLightWeb/releases";
 	private final String UPDATER_NAME = "updater.jar";
+	private final String RUNNER_CLASSPATH = "runner.sh";
 	private GitHubParser parser;
 	
 	public UpdateUtil(String currentVersion) {
@@ -53,12 +59,20 @@ public class UpdateUtil {
 		//download updater jar
 		File updaterFile = downloadUpdater(rootDir);
 		
+		//copy runner script from classpath
+		boolean runnerExists = copyRunnerScript(rootDir);
+		
 		// execute updater
 		String args = "-cv " + RemoteLightWeb.VERSION + " -o \"" + jarDir.getAbsolutePath() +
 					"\" -u " + API_URL + " -w -cmd \"";
 		
 		if(shutdown) {
-			args += "shutdown -h now";
+			String shutdownCmd = ((SettingString) RemoteLightWeb.getInstance().getAPI().getSettingsManager().getSettingFromId("rlweb.shutdowncmd")).getValue();
+			if(shutdownCmd != null && !shutdownCmd.isEmpty()) {
+				args += shutdownCmd;
+			} else {
+				args += "shutdown -h now";
+			}
 		} else {
 			String runCmd = ((SettingString) RemoteLightWeb.getInstance().getAPI().getSettingsManager().getSettingFromId("rlweb.runcmd")).getValue();
 			if(runCmd == null || runCmd.isEmpty()) {
@@ -81,9 +95,13 @@ public class UpdateUtil {
 		
 		String[] cmd;
 		if(linux) {
-			//command = "nohup " + command + " &";	// run in background process
-			// thanks <3 https://stackoverflow.com/a/13909628/12821118
-			cmd = new String[] {"/bin/sh", "-c", command + " > /dev/null 2>&1 &"};
+			// run in background process
+			if(runnerExists) { // ...using runner script
+				// https://stackoverflow.com/a/7665834/12821118
+				cmd = new String[] {"/bin/bash", "-c", "sh runner.sh " + command};
+			} else { // ...directly
+				cmd = new String[] {"nohup", command, "&"};
+			}
 		} else {
 			cmd = new String[] {command};
 		}
@@ -119,6 +137,29 @@ public class UpdateUtil {
 			return null;
 		}
 		return updaterFile;
+	}
+	
+	private boolean copyRunnerScript(String rootDir) {
+		String dir = rootDir + File.separator + RUNNER_CLASSPATH;
+		File file = new File(dir);
+		if(!file.exists()) {
+			try {
+				InputStream input = getClass().getClassLoader().getResourceAsStream(RUNNER_CLASSPATH);
+				Files.copy(input, new File(dir).toPath());
+				
+				// add execute permission
+				Set<PosixFilePermission> perms = new HashSet<>();
+				perms.add(PosixFilePermission.OWNER_EXECUTE);
+				perms.add(PosixFilePermission.OWNER_READ);
+				perms.add(PosixFilePermission.OWNER_WRITE);
+				Files.setPosixFilePermissions(file.toPath(), perms);
+				
+			} catch (IOException e) {
+				Logger.error(e, "Could not copy runner script from classpath.");
+				return false;
+			}
+		}
+		return true;
 	}
 
 }
