@@ -4,23 +4,31 @@ Progressive Web Application for RemoteLight
 
 # Quick Start
 ### Linux
-- install sudo if not already installed `apt-get install sudo`
-- update system `sudo apt-get update && apt-get upgrade`
+- update system `sudo apt-get update && sudo apt-get upgrade`
 - install java (min Java 8) `sudo apt-get install openjdk-8-jre`
-- load the [RemoteLightWeb Jar](https://github.com/Drumber/RemoteLightWeb/releases) on your computer, for example via SFT using [WinSCP](https://winscp.net/eng/download.php).
-- start RemoteLightWeb: `java -jar remotelightweb-0.0.2.jar`
-- it should have automatically created an `config.properties` in the `RemoteLightWeb` folder
+- load the [RemoteLightWeb Jar](https://github.com/Drumber/RemoteLightWeb/releases) to the computer, for example via SFTP using [WinSCP](https://winscp.net/eng/download.php).
+- start RemoteLightWeb: `java -jar remotelightweb-0.0.3.jar`
+- it should have automatically created a `config.properties` file in the `RemoteLightWeb` folder
 - the default ports (443 and 80) can be edited in the `config.properties`
-- stop it: press `Ctrl + c`
-- run in background: `nohup java -jar remotelightweb-0.0.2.jar &`  
-or using screen: `screen -dm -S rlweb java -jar remotelightweb-0.0.2.jar`
+- to stop it press `Ctrl + c`
+- run in background: `nohup java -jar remotelightweb-0.0.3.jar &`  
+or using screen: `screen -dm -S rlweb java -jar remotelightweb-0.0.3.jar`
+
+> Note: The program must be executed as root if the ports are `<=1024`. Therefore error messages may appear when running as non-root user. The ports can be edited in the `config.properties` to e.g. `8080` and `4443`.
+
+#### Run on startup
+- open `rc.local` file: `sudo nano /etc/rc.local`
+- paste the following right before `exit 0`:  
+`su - [user] -c "java -jar /path/to/remotelightweb-0.0.3.jar &"`  
+e.g. as 'pi' user: `su - pi -c "java -jar /home/pi/remotelightweb-0.0.3.jar &"`
+- RemoteLightWeb should now run as background process after restart
 
 ### Windows
 - install [java](https://java.com) (min Java 8)
 - download the [RemoteLightWeb Jar](https://github.com/Drumber/RemoteLightWeb/releases)
 - open console: search cmd or press `WINDOWS + R` and type `cmd.exe`
 - navigate to the directory where the RemoteLightWeb Jar is located: `cd /path/to/remotelightweb`
-- start it: `java -jar remotelightweb-0.0.2.jar`
+- start it: `java -jar remotelightweb-0.0.3.jar`
 - it should have automatically created an `config.properties` in the `RemoteLightWeb` folder
 - the default ports (443 and 80) can be edited in the `config.properties`
 - stop it: press `Ctrl + c`
