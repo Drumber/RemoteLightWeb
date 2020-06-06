@@ -11,11 +11,14 @@ import com.github.appreciated.app.layout.component.menu.left.items.LeftNavigatio
 import com.github.appreciated.app.layout.component.router.AppLayoutRouterLayout;
 import com.github.appreciated.app.layout.entity.Section;
 import com.vaadin.flow.component.UI;
-import com.vaadin.flow.component.dialog.Dialog;
-import com.vaadin.flow.component.html.H3;
+import com.vaadin.flow.component.dependency.CssImport;
+import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.orderedlayout.FlexComponent.Alignment;
+import com.vaadin.flow.component.orderedlayout.FlexComponent.JustifyContentMode;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.dom.ThemeList;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.ErrorHandler;
@@ -23,25 +26,24 @@ import com.vaadin.flow.server.PWA;
 import com.vaadin.flow.server.VaadinSession;
 import com.vaadin.flow.theme.lumo.Lumo;
 
+import de.lars.remotelightclient.Main;
 import de.lars.remotelightclient.settings.types.SettingSelection;
 import de.lars.remotelightweb.RemoteLightWeb;
 import de.lars.remotelightweb.ui.components.UpdateDialog;
-import de.lars.remotelightweb.ui.views.AboutView;
-import de.lars.remotelightweb.ui.views.AnimationsView;
-import de.lars.remotelightweb.ui.views.ColorsView;
-import de.lars.remotelightweb.ui.views.MainView;
-import de.lars.remotelightweb.ui.views.MusicSyncView;
-import de.lars.remotelightweb.ui.views.ScenesView;
-import de.lars.remotelightweb.ui.views.ScriptsView;
-import de.lars.remotelightweb.ui.views.SettingsView;
+import de.lars.remotelightweb.ui.components.custom.PaperSlider;
+import de.lars.remotelightweb.ui.views.*;
 import de.lars.updater.sites.GitHubParser;
 
+@CssImport("./styles/main-layout-style.css")
 @Route
 @PWA(name = "RemoteLightWeb Control Software", shortName = "RemoteLightWeb")
 public class MainLayout extends AppLayoutRouterLayout<LeftLayouts.LeftResponsive> {
+	private final String CLASS_NAME = "main-layout";
 	
 	private static MainLayout instance;
 	private IconButton btnDarkmode;
+	private IconButton btnPopupControl;
+	private Div popupControl;
 	
 	public MainLayout() {
 		instance = this;
@@ -51,8 +53,8 @@ public class MainLayout extends AppLayoutRouterLayout<LeftLayouts.LeftResponsive
 			Logger.error(errorEvent.getThrowable());
 		});
 		
-		//initContainer();
 		initMenu();
+		initPopupMenu();
 		
 		// toggle dark mode
 		String style = ((SettingSelection) RemoteLightWeb.getInstance().getAPI().getSettingsManager().getSettingFromId("ui.style")).getSelected();
@@ -60,6 +62,20 @@ public class MainLayout extends AppLayoutRouterLayout<LeftLayouts.LeftResponsive
 		
 		// show update notification
 		checkAndShowUpdateDialog();
+		
+		// add event listener to content area
+		getAppLayout().getElement().getChildren().forEach(element -> {
+			// if element is the application content wrapper -> add event listener
+			if(element.getAttribute("slot").equals("application-content")) {
+				// click event listener
+				element.addEventListener("click", event -> {
+					// hide popup control window if visible and not clicked
+					if(isPopupControlVisible() && !event.getSource().getClassList().contains(CLASS_NAME + "__popupcontrol")) {
+						setPopupControl(false);
+					}
+				});
+			}
+		});
 	}
 	
 	/**
@@ -74,12 +90,14 @@ public class MainLayout extends AppLayoutRouterLayout<LeftLayouts.LeftResponsive
 	 * Build AppMenu
 	 */
 	private void initMenu() {
-		btnDarkmode = new IconButton(isDarkModeEnabled() ? VaadinIcon.SUN_O.create() : VaadinIcon.MOON_O.create(), e -> toggleDarkMode());
+		btnDarkmode = new IconButton(isDarkModeEnabled() ? VaadinIcon.MOON.create() : VaadinIcon.MOON_O.create(), e -> toggleDarkMode());
+		btnPopupControl = new IconButton(VaadinIcon.SUN_O.create(), e -> togglePopupControl());
 		
         init(AppLayoutBuilder.get(LeftLayouts.LeftResponsive.class)
                 .withTitle("RemoteLightWeb")
                 .withSwipeOpen(true)
                 .withAppBar(AppBarBuilder.get()
+                		.add(btnPopupControl)
                 		.add(btnDarkmode)
                 		.build())
                 .withAppMenu(LeftAppMenuBuilder.get()
@@ -99,6 +117,47 @@ public class MainLayout extends AppLayoutRouterLayout<LeftLayouts.LeftResponsive
                         )
                         .build())
                 .build());
+	}
+	
+	private void initPopupMenu() {
+		HorizontalLayout popupContent = new HorizontalLayout();
+		popupContent.setAlignItems(Alignment.CENTER);
+		popupContent.setJustifyContentMode(JustifyContentMode.CENTER);
+		
+		PaperSlider brightness = new PaperSlider();
+		brightness.setMax(100);
+		brightness.setPin(true);
+		brightness.setValue((int) Main.getInstance().getSettingsManager().getSettingObject("out.brightness").getValue());
+		brightness.addValueChangeListener(e -> {
+			Main.getInstance().getOutputManager().setBrightness(brightness.getValue());
+			Main.getInstance().getSettingsManager().getSettingObject("out.brightness").setValue(brightness.getValue());
+		});
+		popupContent.add(new Label("Brightness"), brightness);
+		
+		Div wrapper = new Div(popupContent);
+		wrapper.setClassName(CLASS_NAME + "__popupcontrol-wrapper");
+		
+		popupControl = new Div(wrapper);
+		popupControl.setClassName(CLASS_NAME + "__popupcontrol");
+		popupControl.getStyle()
+			.set("visibility", "hidden")
+			.set("opacity", "0");
+		
+		// add it to the main layout
+		getContent().add(popupControl);
+	}
+	
+	public void togglePopupControl() {
+		setPopupControl(!isPopupControlVisible());
+	}
+	
+	public void setPopupControl(boolean visible) {
+		popupControl.getStyle().set("visibility", visible ? "visible" : "hidden");
+		popupControl.getStyle().set("opacity", visible ? "1" : "0");
+	}
+	
+	public boolean isPopupControlVisible() {
+		return !popupControl.getStyle().get("visibility").equals("hidden");
 	}
 	
 	/**
@@ -121,7 +180,7 @@ public class MainLayout extends AppLayoutRouterLayout<LeftLayouts.LeftResponsive
 			setting.setSelected("Light");
 		} else {
 			themeList.add(Lumo.DARK);
-			btnDarkmode.setIcon(VaadinIcon.SUN_O.create());
+			btnDarkmode.setIcon(VaadinIcon.MOON.create());
 			setting.setSelected("Dark");
 		}
 	}

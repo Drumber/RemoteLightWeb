@@ -1,0 +1,21 @@
+.main-layout__popupcontrol {
+	width: auto;
+	height: auto;
+	position: fixed;
+	z-index: 100;
+	top: 65px;
+	right: 5px;
+	box-shadow: var(--lumo-box-shadow-l);
+	transition: box-shadow 0.5s ease, visibility, visibility 0.33s linear 0s, opacity 0.33s linear;
+	transition-delay: 0s;
+	border-radius: var(--lumo-border-radius);
+	background-color: var(--lumo-base-color);
+}
+
+.main-layout__popupcontrol-wrapper {
+	background-color: var(--app-layout-bar-background-color);
+	width: 200px;
+	height: auto;
+	border-radius: var(--lumo-border-radius);
+	padding: 20px;
+}
