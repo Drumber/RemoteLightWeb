@@ -25,6 +25,7 @@ import de.lars.remotelightcore.settings.types.SettingString;
 import de.lars.remotelightcore.utils.DirectoryUtil;
 import de.lars.remotelightweb.backend.ConfigFile;
 import de.lars.remotelightweb.backend.utils.UpdateUtil;
+import de.lars.remotelightweb.ui.utils.NotificationHandler;
 
 /**
  * The entry point of the Spring Boot application.
@@ -40,6 +41,8 @@ public class RemoteLightWeb extends SpringBootServletInitializer {
 	private static RemoteLightWeb instance;
 	private RemoteLightCore remoteLightCore;
 	private UpdateUtil updateUtil;
+	private NotificationHandler notificationHandler;
+	
 	private static long lastUpdateNotification;
 	private boolean closing;
 	
@@ -61,6 +64,9 @@ public class RemoteLightWeb extends SpringBootServletInitializer {
 		remoteLightCore = new RemoteLightCore(new String[0], true);
 		updateUtil = new UpdateUtil(VERSION);
 		setup();	// initial some settings and check for updates
+		
+		// init and register notification handler
+		notificationHandler = new NotificationHandler(remoteLightCore.getNotificationManager());
     }
     
     
@@ -101,6 +107,10 @@ public class RemoteLightWeb extends SpringBootServletInitializer {
     
     public static ConfigFile getConfig() {
     	return config;
+    }
+    
+    public NotificationHandler getNotificationHandler() {
+    	return notificationHandler;
     }
     
     
