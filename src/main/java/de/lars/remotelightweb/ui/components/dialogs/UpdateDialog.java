@@ -1,4 +1,4 @@
-package de.lars.remotelightweb.ui.components;
+package de.lars.remotelightweb.ui.components.dialogs;
 
 import org.tinylog.Logger;
 

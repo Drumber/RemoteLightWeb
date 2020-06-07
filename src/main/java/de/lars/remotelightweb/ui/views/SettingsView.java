@@ -1,17 +1,12 @@
 package de.lars.remotelightweb.ui.views;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.tinylog.Logger;
-
 import com.vaadin.flow.component.DetachEvent;
 import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.html.H3;
-import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
@@ -20,12 +15,11 @@ import de.lars.remotelightcore.settings.Setting;
 import de.lars.remotelightcore.settings.SettingsManager;
 import de.lars.remotelightcore.settings.SettingsManager.SettingCategory;
 import de.lars.remotelightcore.settings.types.SettingSelection;
-import de.lars.remotelightcore.settings.types.SettingString;
 import de.lars.remotelightweb.RemoteLightWeb;
 import de.lars.remotelightweb.backend.utils.UpdateUtil;
 import de.lars.remotelightweb.ui.MainLayout;
-import de.lars.remotelightweb.ui.components.UpdateDialog;
-import de.lars.remotelightweb.ui.components.custom.PaperSlider;
+import de.lars.remotelightweb.ui.components.dialogs.ShutdownDialog;
+import de.lars.remotelightweb.ui.components.dialogs.UpdateDialog;
 import de.lars.remotelightweb.ui.components.settingpanels.SettingPanel;
 import de.lars.remotelightweb.ui.utils.SettingPanelUtil;
 
@@ -44,48 +38,16 @@ public class SettingsView extends VerticalLayout {
 		add(getSettingsContainer(SettingCategory.General, "General"));
 		add(getSettingsContainer(SettingCategory.Others, "Others"));
 		
-		PaperSlider brightness = new PaperSlider();
-		brightness.setMax(100);
-		brightness.setPin(true);
-		brightness.setValue((int) RemoteLightWeb.getInstance().getCore().getSettingsManager().getSettingObject("out.brightness").getValue());
-		brightness.addValueChangeListener(e -> {
-			RemoteLightWeb.getInstance().getCore().getOutputManager().setBrightness(brightness.getValue());
-			RemoteLightWeb.getInstance().getCore().getSettingsManager().getSettingObject("out.brightness").setValue(brightness.getValue());
-		});
-		add(new Label("Brightness"), brightness);
-		
 		add(new Button("Check for updates", e -> {
 			UpdateUtil updater = RemoteLightWeb.getInstance().getUpdateUtil();
 			updater.check();
-			new UpdateDialog(updater.getParser()).open();;
+			new UpdateDialog(updater.getParser()).open();
 		}));
 		
 		Button btnShutdown = new Button("Shutdown");
 		add(btnShutdown);
 		btnShutdown.addClickListener(e -> {
-			Dialog dialog = new Dialog();
-			Button web = new Button("Shutdown RemoteLightWeb", w -> {
-				RemoteLightWeb.exitApplication();
-			});
-			web.getStyle().set("margin", "5px 5px");
-			dialog.add(web);
-			Button system = new Button("Shutdown System", p -> {
-				RemoteLightWeb.getInstance().getCore().close(false);
-				Runtime runtime = Runtime.getRuntime();
-				
-				String shutdownCmd = ((SettingString) RemoteLightWeb.getInstance().getCore().getSettingsManager().getSettingFromId("rlweb.shutdowncmd")).getValue();
-				if(shutdownCmd == null || shutdownCmd.isEmpty()) {
-					shutdownCmd = "shutdown -h now";
-				}
-				
-				try {
-					runtime.exec(shutdownCmd);
-				} catch (IOException ex) {
-					Logger.error(ex, "Shutdown >> Could not execute command!");
-				}
-			});
-			system.getStyle().set("margin", "5px 5px");
-			dialog.add(system);
+			ShutdownDialog dialog = new ShutdownDialog();
 			dialog.open();
 		});
 	}

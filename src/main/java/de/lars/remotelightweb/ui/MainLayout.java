@@ -26,7 +26,7 @@ import de.lars.remotelightcore.settings.types.SettingSelection;
 import de.lars.remotelightweb.RemoteLightWeb;
 import de.lars.remotelightweb.ui.components.ControlPanel;
 import de.lars.remotelightweb.ui.components.MenuIcons;
-import de.lars.remotelightweb.ui.components.UpdateDialog;
+import de.lars.remotelightweb.ui.components.dialogs.UpdateDialog;
 import de.lars.remotelightweb.ui.views.*;
 import de.lars.updater.sites.GitHubParser;
 
@@ -37,7 +37,6 @@ public class MainLayout extends AppLayoutRouterLayout<LeftLayouts.LeftResponsive
 	
 	private RemoteLightCore core;
 	private static MainLayout instance;
-	private IconButton btnDarkmode;
 	private IconButton btnPopupControl;
 	private ControlPanel controlPanel;
 	
@@ -51,12 +50,12 @@ public class MainLayout extends AppLayoutRouterLayout<LeftLayouts.LeftResponsive
 			Logger.error(errorEvent.getThrowable());
 		});
 		
-		initMenu();
-		initPopupMenu();
-		
 		// toggle dark mode
 		String style = ((SettingSelection) core.getSettingsManager().getSettingFromId("ui.style")).getSelected();
 		setDarkMode(style.equalsIgnoreCase("Dark"));
+		
+		initMenu();
+		initPopupMenu();
 		
 		// show update notification
 		checkAndShowUpdateDialog();
@@ -74,15 +73,14 @@ public class MainLayout extends AppLayoutRouterLayout<LeftLayouts.LeftResponsive
 	 * Build AppMenu
 	 */
 	private void initMenu() {
-		btnDarkmode = new IconButton(isDarkModeEnabled() ? VaadinIcon.MOON.create() : VaadinIcon.MOON_O.create(), e -> toggleDarkMode());
-		btnPopupControl = new IconButton(VaadinIcon.SUN_O.create(), e -> controlPanel.togglePopupControl());
+		btnPopupControl = new IconButton(VaadinIcon.COGS.create(), e -> controlPanel.togglePopupControl());
+		btnPopupControl.getElement().setProperty("title", "Control Panel");
 		
         init(AppLayoutBuilder.get(LeftLayouts.LeftResponsive.class)
                 .withTitle("RemoteLightWeb")
                 .withSwipeOpen(true)
                 .withAppBar(AppBarBuilder.get()
                 		.add(btnPopupControl)
-                		.add(btnDarkmode)
                 		.build())
                 .withAppMenu(LeftAppMenuBuilder.get()
                         // \/ add new menu items here \/
@@ -131,11 +129,9 @@ public class MainLayout extends AppLayoutRouterLayout<LeftLayouts.LeftResponsive
 		SettingSelection setting = ((SettingSelection) RemoteLightWeb.getInstance().getCore().getSettingsManager().getSettingFromId("ui.style"));
 		if (!enable) {
 			themeList.remove(Lumo.DARK);
-			btnDarkmode.setIcon(VaadinIcon.MOON_O.create());
 			setting.setSelected("Light");
 		} else {
 			themeList.add(Lumo.DARK);
-			btnDarkmode.setIcon(VaadinIcon.MOON.create());
 			setting.setSelected("Dark");
 		}
 	}
