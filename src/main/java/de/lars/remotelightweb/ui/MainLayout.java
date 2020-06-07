@@ -11,14 +11,9 @@ import com.github.appreciated.app.layout.component.menu.left.items.LeftNavigatio
 import com.github.appreciated.app.layout.component.router.AppLayoutRouterLayout;
 import com.github.appreciated.app.layout.entity.Section;
 import com.vaadin.flow.component.UI;
-import com.vaadin.flow.component.dependency.CssImport;
-import com.vaadin.flow.component.html.Div;
-import com.vaadin.flow.component.html.Label;
+import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
-import com.vaadin.flow.component.orderedlayout.FlexComponent.Alignment;
-import com.vaadin.flow.component.orderedlayout.FlexComponent.JustifyContentMode;
-import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.dom.ThemeList;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.ErrorHandler;
@@ -29,12 +24,12 @@ import com.vaadin.flow.theme.lumo.Lumo;
 import de.lars.remotelightcore.RemoteLightCore;
 import de.lars.remotelightcore.settings.types.SettingSelection;
 import de.lars.remotelightweb.RemoteLightWeb;
+import de.lars.remotelightweb.ui.components.ControlPanel;
+import de.lars.remotelightweb.ui.components.MenuIcons;
 import de.lars.remotelightweb.ui.components.UpdateDialog;
-import de.lars.remotelightweb.ui.components.custom.PaperSlider;
 import de.lars.remotelightweb.ui.views.*;
 import de.lars.updater.sites.GitHubParser;
 
-@CssImport("./styles/main-layout-style.css")
 @Route
 @PWA(name = "RemoteLightWeb Control Software", shortName = "RemoteLightWeb")
 public class MainLayout extends AppLayoutRouterLayout<LeftLayouts.LeftResponsive> {
@@ -44,7 +39,7 @@ public class MainLayout extends AppLayoutRouterLayout<LeftLayouts.LeftResponsive
 	private static MainLayout instance;
 	private IconButton btnDarkmode;
 	private IconButton btnPopupControl;
-	private Div popupControl;
+	private ControlPanel controlPanel;
 	
 	public MainLayout() {
 		instance = this;
@@ -65,20 +60,6 @@ public class MainLayout extends AppLayoutRouterLayout<LeftLayouts.LeftResponsive
 		
 		// show update notification
 		checkAndShowUpdateDialog();
-		
-		// add event listener to content area
-		getAppLayout().getElement().getChildren().forEach(element -> {
-			// if element is the application content wrapper -> add event listener
-			if(element.getAttribute("slot").equals("application-content")) {
-				// click event listener
-				element.addEventListener("click", event -> {
-					// hide popup control window if visible and not clicked
-					if(isPopupControlVisible() && !event.getSource().getClassList().contains(CLASS_NAME + "__popupcontrol")) {
-						setPopupControl(false);
-					}
-				});
-			}
-		});
 	}
 	
 	/**
@@ -94,7 +75,7 @@ public class MainLayout extends AppLayoutRouterLayout<LeftLayouts.LeftResponsive
 	 */
 	private void initMenu() {
 		btnDarkmode = new IconButton(isDarkModeEnabled() ? VaadinIcon.MOON.create() : VaadinIcon.MOON_O.create(), e -> toggleDarkMode());
-		btnPopupControl = new IconButton(VaadinIcon.SUN_O.create(), e -> togglePopupControl());
+		btnPopupControl = new IconButton(VaadinIcon.SUN_O.create(), e -> controlPanel.togglePopupControl());
 		
         init(AppLayoutBuilder.get(LeftLayouts.LeftResponsive.class)
                 .withTitle("RemoteLightWeb")
@@ -105,62 +86,33 @@ public class MainLayout extends AppLayoutRouterLayout<LeftLayouts.LeftResponsive
                 		.build())
                 .withAppMenu(LeftAppMenuBuilder.get()
                         // \/ add new menu items here \/
-                        .add(new LeftNavigationItem("Outputs", VaadinIcon.CONNECT.create(), MainView.class),
-                                new LeftNavigationItem("Colors", VaadinIcon.PALETE.create(), ColorsView.class),
-                                new LeftNavigationItem("Scenes", VaadinIcon.MAGIC.create(), ScenesView.class),
-                                new LeftNavigationItem("Animations", VaadinIcon.PLAY_CIRCLE_O.create(), AnimationsView.class),
-                                new LeftNavigationItem("Scripts", VaadinIcon.FILE_CODE.create(), ScriptsView.class),
-                                new LeftNavigationItem("MusicSync", VaadinIcon.MUSIC.create(), MusicSyncView.class),
-                                new LeftNavigationItem("Settings", VaadinIcon.COGS.create(), SettingsView.class)
+                        .add(new LeftNavigationItem("Outputs", MenuIcons.OUTPUTS.create(), MainView.class),
+                                new LeftNavigationItem("Colors", MenuIcons.COLOR_PALETTE.create(), ColorsView.class),
+                                new LeftNavigationItem("Scenes", MenuIcons.SCENE.create(), ScenesView.class),
+                                new LeftNavigationItem("Animations", MenuIcons.ANIMATION.create(), AnimationsView.class),
+                                new LeftNavigationItem("Scripts", MenuIcons.SCRIPTS.create(), ScriptsView.class),
+                                new LeftNavigationItem("MusicSync", MenuIcons.MUSICSYMC.create(), MusicSyncView.class),
+                                new LeftNavigationItem("Settings", MenuIcons.SETTINGS.create(), SettingsView.class)
                         )
                         // Footer
                         .withStickyFooter()
                         .addToSection(Section.FOOTER,
-                        		new LeftNavigationItem("About", VaadinIcon.INFO_CIRCLE.create(), AboutView.class)
+                        		new LeftNavigationItem("About", MenuIcons.ABOUT.create(), AboutView.class)
                         )
                         .build())
                 .build());
+        // fix title styling issue
+        ((Span) getAppLayout().getTitleComponent()).getStyle().set("color", "var(--lumo-header-text-color)");
 	}
 	
 	private void initPopupMenu() {
-		HorizontalLayout popupContent = new HorizontalLayout();
-		popupContent.setAlignItems(Alignment.CENTER);
-		popupContent.setJustifyContentMode(JustifyContentMode.CENTER);
-		
-		PaperSlider brightness = new PaperSlider();
-		brightness.setMax(100);
-		brightness.setPin(true);
-		brightness.setValue((int) core.getSettingsManager().getSettingObject("out.brightness").getValue());
-		brightness.addValueChangeListener(e -> {
-			core.getOutputManager().setBrightness(brightness.getValue());
-			core.getSettingsManager().getSettingObject("out.brightness").setValue(brightness.getValue());
-		});
-		popupContent.add(new Label("Brightness"), brightness);
-		
-		Div wrapper = new Div(popupContent);
-		wrapper.setClassName(CLASS_NAME + "__popupcontrol-wrapper");
-		
-		popupControl = new Div(wrapper);
-		popupControl.setClassName(CLASS_NAME + "__popupcontrol");
-		popupControl.getStyle()
-			.set("visibility", "hidden")
-			.set("opacity", "0");
-		
+		controlPanel = new ControlPanel(getAppLayout());
 		// add it to the main layout
-		getContent().add(popupControl);
+		getContent().add(controlPanel);
 	}
 	
-	public void togglePopupControl() {
-		setPopupControl(!isPopupControlVisible());
-	}
-	
-	public void setPopupControl(boolean visible) {
-		popupControl.getStyle().set("visibility", visible ? "visible" : "hidden");
-		popupControl.getStyle().set("opacity", visible ? "1" : "0");
-	}
-	
-	public boolean isPopupControlVisible() {
-		return !popupControl.getStyle().get("visibility").equals("hidden");
+	public ControlPanel getControlPanel() {
+		return controlPanel;
 	}
 	
 	/**

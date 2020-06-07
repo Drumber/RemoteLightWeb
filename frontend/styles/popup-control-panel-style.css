@@ -1,4 +1,4 @@
-.main-layout__popupcontrol {
+.popup-control-panel__root {
 	width: auto;
 	height: auto;
 	position: fixed;
@@ -12,7 +12,7 @@
 	background-color: var(--lumo-base-color);
 }
 
-.main-layout__popupcontrol-wrapper {
+.popup-control-panel__wrapper {
 	background-color: var(--app-layout-bar-background-color);
 	width: 200px;
 	height: auto;
