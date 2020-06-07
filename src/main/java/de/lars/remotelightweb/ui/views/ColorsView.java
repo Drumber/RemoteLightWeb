@@ -7,9 +7,10 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 
-import de.lars.remotelightclient.Main;
-import de.lars.remotelightclient.out.OutputManager;
-import de.lars.remotelightclient.utils.PixelColorUtils;
+import de.lars.remotelightcore.RemoteLightCore;
+import de.lars.remotelightcore.out.OutputManager;
+import de.lars.remotelightcore.utils.color.PixelColorUtils;
+import de.lars.remotelightweb.RemoteLightWeb;
 import de.lars.remotelightweb.ui.MainLayout;
 import de.lars.remotelightweb.ui.utils.ColorUtils;
 
@@ -24,7 +25,8 @@ public class ColorsView extends VerticalLayout {
 		cp.setPalette(ColorUtils.getColorPalette());
 		
 		cp.addValueChangeListener(e -> {
-			OutputManager.addToOutput(PixelColorUtils.colorAllPixels(cp.getValue(), Main.getLedNum()));
+			RemoteLightWeb.getInstance().getCore();
+			OutputManager.addToOutput(PixelColorUtils.colorAllPixels(cp.getValue(), RemoteLightCore.getLedNum()));
 		});
 		
 		add(cp);

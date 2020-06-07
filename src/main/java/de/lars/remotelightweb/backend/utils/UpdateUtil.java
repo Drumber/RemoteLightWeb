@@ -12,9 +12,9 @@ import java.util.Set;
 import org.springframework.boot.system.ApplicationHome;
 import org.tinylog.Logger;
 
-import de.lars.remotelightclient.settings.types.SettingBoolean;
-import de.lars.remotelightclient.settings.types.SettingString;
-import de.lars.remotelightclient.utils.DirectoryUtil;
+import de.lars.remotelightcore.settings.types.SettingBoolean;
+import de.lars.remotelightcore.settings.types.SettingString;
+import de.lars.remotelightcore.utils.DirectoryUtil;
 import de.lars.remotelightweb.RemoteLightWeb;
 import de.lars.updater.sites.GitHubParser;
 import de.lars.updater.utils.FileDownloader;
@@ -67,14 +67,14 @@ public class UpdateUtil {
 					"\" -u " + API_URL + " -w -cmd \"";
 		
 		if(shutdown) {
-			String shutdownCmd = ((SettingString) RemoteLightWeb.getInstance().getAPI().getSettingsManager().getSettingFromId("rlweb.shutdowncmd")).getValue();
+			String shutdownCmd = ((SettingString) RemoteLightWeb.getInstance().getCore().getSettingsManager().getSettingFromId("rlweb.shutdowncmd")).getValue();
 			if(shutdownCmd != null && !shutdownCmd.isEmpty()) {
 				args += shutdownCmd;
 			} else {
 				args += "shutdown -h now";
 			}
 		} else {
-			String runCmd = ((SettingString) RemoteLightWeb.getInstance().getAPI().getSettingsManager().getSettingFromId("rlweb.runcmd")).getValue();
+			String runCmd = ((SettingString) RemoteLightWeb.getInstance().getCore().getSettingsManager().getSettingFromId("rlweb.runcmd")).getValue();
 			if(runCmd == null || runCmd.isEmpty()) {
 				runCmd = "nothing";
 			}
@@ -84,7 +84,7 @@ public class UpdateUtil {
 		
 		String command;
 		if(linux) {
-			if(((SettingBoolean) RemoteLightWeb.getInstance().getAPI().getSettingsManager().getSettingFromId("rlweb.updater.screen")).getValue()) {
+			if(((SettingBoolean) RemoteLightWeb.getInstance().getCore().getSettingsManager().getSettingFromId("rlweb.updater.screen")).getValue()) {
 				command = String.format("screen -dm -S rlwupdater java -jar %s %s", updaterFile.getAbsoluteFile(), args);	// run updater in new screen
 			} else {
 				command = String.format("java -jar %s %s", updaterFile.getAbsoluteFile(), args);

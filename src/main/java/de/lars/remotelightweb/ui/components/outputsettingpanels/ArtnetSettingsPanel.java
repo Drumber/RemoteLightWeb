@@ -6,8 +6,8 @@ import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.textfield.IntegerField;
 import com.vaadin.flow.component.textfield.TextField;
 
-import de.lars.remotelightclient.devices.arduino.RgbOrder;
-import de.lars.remotelightclient.devices.artnet.Artnet;
+import de.lars.remotelightcore.devices.arduino.RgbOrder;
+import de.lars.remotelightcore.devices.artnet.Artnet;
 
 public class ArtnetSettingsPanel extends OutputSettingsPanel {
 	

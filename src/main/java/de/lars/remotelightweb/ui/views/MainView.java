@@ -15,22 +15,18 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 
-import de.lars.remotelightclient.devices.ConnectionState;
-import de.lars.remotelightclient.devices.Device;
-import de.lars.remotelightclient.devices.DeviceManager;
-import de.lars.remotelightclient.devices.arduino.Arduino;
-import de.lars.remotelightclient.devices.artnet.Artnet;
-import de.lars.remotelightclient.devices.link.chain.Chain;
-import de.lars.remotelightclient.devices.remotelightserver.RemoteLightServer;
-import de.lars.remotelightclient.out.OutputManager;
-import de.lars.remotelightclient.utils.OutputUtil;
+import de.lars.remotelightcore.devices.ConnectionState;
+import de.lars.remotelightcore.devices.Device;
+import de.lars.remotelightcore.devices.DeviceManager;
+import de.lars.remotelightcore.devices.arduino.Arduino;
+import de.lars.remotelightcore.devices.artnet.Artnet;
+import de.lars.remotelightcore.devices.link.chain.Chain;
+import de.lars.remotelightcore.devices.remotelightserver.RemoteLightServer;
+import de.lars.remotelightcore.out.OutputManager;
+import de.lars.remotelightcore.utils.OutputUtil;
 import de.lars.remotelightweb.RemoteLightWeb;
 import de.lars.remotelightweb.ui.MainLayout;
-import de.lars.remotelightweb.ui.components.outputsettingpanels.ArduinoSettingsPanel;
-import de.lars.remotelightweb.ui.components.outputsettingpanels.ArtnetSettingsPanel;
-import de.lars.remotelightweb.ui.components.outputsettingpanels.ChainSettingsPanel;
-import de.lars.remotelightweb.ui.components.outputsettingpanels.OutputSettingsPanel;
-import de.lars.remotelightweb.ui.components.outputsettingpanels.RLServerSettingsPanel;
+import de.lars.remotelightweb.ui.components.outputsettingpanels.*;
 
 @CssImport("./styles/main-view-style.css")
 @PageTitle("Outputs")
@@ -38,8 +34,8 @@ import de.lars.remotelightweb.ui.components.outputsettingpanels.RLServerSettings
 public class MainView extends FlexLayout {
 	private static final String CLASS_NAME = "main-view";
 	
-	private DeviceManager dm = RemoteLightWeb.getInstance().getAPI().getDeviceManager();
-	private OutputManager om = RemoteLightWeb.getInstance().getAPI().getOutputManager();
+	private DeviceManager dm = RemoteLightWeb.getInstance().getCore().getDeviceManager();
+	private OutputManager om = RemoteLightWeb.getInstance().getCore().getOutputManager();
 	private FlexLayout layoutOutputs;
 	private VerticalLayout layoutOptions;
 	private ContextMenu contextMenuAdd;

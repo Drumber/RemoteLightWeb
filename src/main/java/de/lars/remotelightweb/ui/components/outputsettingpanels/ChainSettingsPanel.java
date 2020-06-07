@@ -10,8 +10,8 @@ import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.FlexLayout;
 import com.vaadin.flow.component.textfield.TextField;
 
-import de.lars.remotelightclient.devices.Device;
-import de.lars.remotelightclient.devices.link.chain.Chain;
+import de.lars.remotelightcore.devices.Device;
+import de.lars.remotelightcore.devices.link.chain.Chain;
 import de.lars.remotelightweb.RemoteLightWeb;
 
 public class ChainSettingsPanel extends OutputSettingsPanel {
@@ -39,7 +39,7 @@ public class ChainSettingsPanel extends OutputSettingsPanel {
 		Button btnAdd = new Button("Add");
 		btnAdd.addClickListener(e -> {
 			if(boxOutputs.getValue() != null) {
-				chain.addDevices(RemoteLightWeb.getInstance().getAPI().getDeviceManager().getDevice(boxOutputs.getValue()));
+				chain.addDevices(RemoteLightWeb.getInstance().getCore().getDeviceManager().getDevice(boxOutputs.getValue()));
 				initOutputBox();
 				addOutputsToPanel();
 			}
@@ -62,7 +62,7 @@ public class ChainSettingsPanel extends OutputSettingsPanel {
 	private void initOutputBox() {
 		// add devices to combobox
 		List<String> outputs = new ArrayList<>();
-		for(Device d : RemoteLightWeb.getInstance().getAPI().getDeviceManager().getDevices()) {
+		for(Device d : RemoteLightWeb.getInstance().getCore().getDeviceManager().getDevices()) {
 			if(!(d instanceof Chain) && !chain.getDevices().contains(d)) {
 				outputs.add(d.getId());
 			}

@@ -8,10 +8,10 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 
-import de.lars.remotelightclient.devices.ConnectionState;
-import de.lars.remotelightclient.scene.Scene;
-import de.lars.remotelightclient.scene.SceneManager;
-import de.lars.remotelightclient.settings.SettingsManager;
+import de.lars.remotelightcore.devices.ConnectionState;
+import de.lars.remotelightcore.scene.Scene;
+import de.lars.remotelightcore.scene.SceneManager;
+import de.lars.remotelightcore.settings.SettingsManager;
 import de.lars.remotelightweb.RemoteLightWeb;
 import de.lars.remotelightweb.ui.MainLayout;
 
@@ -21,8 +21,8 @@ import de.lars.remotelightweb.ui.MainLayout;
 public class ScenesView extends VerticalLayout {
 	private final String CLASS_NAME = "animations-view";
 	
-	private SettingsManager sm = RemoteLightWeb.getInstance().getAPI().getSettingsManager();
-	private SceneManager scm = RemoteLightWeb.getInstance().getAPI().getSceneManager();
+	private SettingsManager sm = RemoteLightWeb.getInstance().getCore().getSettingsManager();
+	private SceneManager scm = RemoteLightWeb.getInstance().getCore().getSceneManager();
 	private FlexLayout layoutScenes;
 	
 	public ScenesView() {
@@ -61,8 +61,8 @@ public class ScenesView extends VerticalLayout {
 		if(scm.getActiveScene() != null && scm.getActiveScene().getName().equals(s.getName())) {
 			scm.stop();
 		} else {
-			if(RemoteLightWeb.getInstance().getAPI().getOutputManager().getActiveOutput() != null &&
-					RemoteLightWeb.getInstance().getAPI().getOutputManager().getActiveOutput().getState() == ConnectionState.CONNECTED)
+			if(RemoteLightWeb.getInstance().getCore().getOutputManager().getActiveOutput() != null &&
+					RemoteLightWeb.getInstance().getCore().getOutputManager().getActiveOutput().getState() == ConnectionState.CONNECTED)
 			{
 				scm.start(s);
 			} else {

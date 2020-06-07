@@ -4,8 +4,8 @@ import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.textfield.IntegerField;
 import com.vaadin.flow.component.textfield.TextField;
 
-import de.lars.remotelightclient.devices.arduino.RgbOrder;
-import de.lars.remotelightclient.devices.remotelightserver.RemoteLightServer;
+import de.lars.remotelightcore.devices.arduino.RgbOrder;
+import de.lars.remotelightcore.devices.remotelightserver.RemoteLightServer;
 
 public class RLServerSettingsPanel extends OutputSettingsPanel {
 	

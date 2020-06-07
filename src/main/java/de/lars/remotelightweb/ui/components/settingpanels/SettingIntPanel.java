@@ -1,9 +1,8 @@
 package de.lars.remotelightweb.ui.components.settingpanels;
 
 import com.vaadin.flow.component.textfield.IntegerField;
-import com.vaadin.flow.component.textfield.NumberField;
 
-import de.lars.remotelightclient.settings.types.SettingInt;
+import de.lars.remotelightcore.settings.types.SettingInt;
 
 public class SettingIntPanel extends SettingPanel {
 	

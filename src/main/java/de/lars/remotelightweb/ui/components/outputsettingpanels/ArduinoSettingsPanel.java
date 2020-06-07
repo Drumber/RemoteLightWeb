@@ -8,9 +8,9 @@ import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.textfield.IntegerField;
 import com.vaadin.flow.component.textfield.TextField;
 
-import de.lars.remotelightclient.devices.arduino.Arduino;
-import de.lars.remotelightclient.devices.arduino.ComPort;
-import de.lars.remotelightclient.devices.arduino.RgbOrder;
+import de.lars.remotelightcore.devices.arduino.Arduino;
+import de.lars.remotelightcore.devices.arduino.ComPort;
+import de.lars.remotelightcore.devices.arduino.RgbOrder;
 
 public class ArduinoSettingsPanel extends OutputSettingsPanel {
 	

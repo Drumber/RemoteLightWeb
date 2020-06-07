@@ -18,16 +18,14 @@ import com.vaadin.flow.component.radiobutton.RadioGroupVariant;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 
-import de.lars.remotelightclient.Main;
-import de.lars.remotelightclient.devices.ConnectionState;
-import de.lars.remotelightclient.musicsync.InputUtil;
-import de.lars.remotelightclient.musicsync.MusicEffect;
-import de.lars.remotelightclient.musicsync.MusicSyncManager;
-import de.lars.remotelightclient.musicsync.sound.Shared;
-import de.lars.remotelightclient.musicsync.sound.SoundProcessing;
-import de.lars.remotelightclient.settings.Setting;
-import de.lars.remotelightclient.settings.SettingsManager;
-import de.lars.remotelightclient.settings.types.SettingObject;
+import de.lars.remotelightcore.devices.ConnectionState;
+import de.lars.remotelightcore.musicsync.InputUtil;
+import de.lars.remotelightcore.musicsync.MusicEffect;
+import de.lars.remotelightcore.musicsync.MusicSyncManager;
+import de.lars.remotelightcore.musicsync.sound.Shared;
+import de.lars.remotelightcore.settings.Setting;
+import de.lars.remotelightcore.settings.SettingsManager;
+import de.lars.remotelightcore.settings.types.SettingObject;
 import de.lars.remotelightweb.RemoteLightWeb;
 import de.lars.remotelightweb.ui.MainLayout;
 import de.lars.remotelightweb.ui.components.custom.PaperSlider;
@@ -40,8 +38,8 @@ import de.lars.remotelightweb.ui.utils.SettingPanelUtil;
 public class MusicSyncView extends FlexLayout {
 	private final String CLASS_NAME = "musicsync-view";
 	
-	private SettingsManager sm = RemoteLightWeb.getInstance().getAPI().getSettingsManager();
-	private MusicSyncManager msm = RemoteLightWeb.getInstance().getAPI().getMusicSyncManager();
+	private SettingsManager sm = RemoteLightWeb.getInstance().getCore().getSettingsManager();
+	private MusicSyncManager msm = RemoteLightWeb.getInstance().getCore().getMusicSyncManager();
 	private FlexLayout layoutEffects;
 	private VerticalLayout layoutEffectOptions;
 	private VerticalLayout layoutSettings;
@@ -143,8 +141,8 @@ public class MusicSyncView extends FlexLayout {
 			msm.stop();
 			layoutEffectOptions.removeAll();
 		} else {
-			if(RemoteLightWeb.getInstance().getAPI().getOutputManager().getActiveOutput() != null &&
-					RemoteLightWeb.getInstance().getAPI().getOutputManager().getActiveOutput().getState() == ConnectionState.CONNECTED)
+			if(RemoteLightWeb.getInstance().getCore().getOutputManager().getActiveOutput() != null &&
+					RemoteLightWeb.getInstance().getCore().getOutputManager().getActiveOutput().getState() == ConnectionState.CONNECTED)
 			{
 				msm.start(m);
 				showEffectOptions();
@@ -204,11 +202,12 @@ public class MusicSyncView extends FlexLayout {
 				for(Mixer.Info info : Shared.getMixerInfo(false, true)) {
 					if(e.getValue().equals(Shared.toLocalString(info))){
 						Mixer newMixer = AudioSystem.getMixer(info);
-						SoundProcessing.setMixer(newMixer);
+						MusicSyncManager msm = RemoteLightWeb.getInstance().getCore().getMusicSyncManager();
+						msm.getSoundProcessor().setMixer(newMixer);
 						//save last selected to data file
 						sm.getSettingObject("musicsync.input").setValue(info.toString());
 						//refresh SoundProcessor
-						Main.getInstance().getMusicSyncManager().newSoundProcessor();
+						msm.newSoundProcessor();
 						break;
 					}
 				}

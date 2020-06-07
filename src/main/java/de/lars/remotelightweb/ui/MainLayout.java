@@ -26,8 +26,8 @@ import com.vaadin.flow.server.PWA;
 import com.vaadin.flow.server.VaadinSession;
 import com.vaadin.flow.theme.lumo.Lumo;
 
-import de.lars.remotelightclient.Main;
-import de.lars.remotelightclient.settings.types.SettingSelection;
+import de.lars.remotelightcore.RemoteLightCore;
+import de.lars.remotelightcore.settings.types.SettingSelection;
 import de.lars.remotelightweb.RemoteLightWeb;
 import de.lars.remotelightweb.ui.components.UpdateDialog;
 import de.lars.remotelightweb.ui.components.custom.PaperSlider;
@@ -40,6 +40,7 @@ import de.lars.updater.sites.GitHubParser;
 public class MainLayout extends AppLayoutRouterLayout<LeftLayouts.LeftResponsive> {
 	private final String CLASS_NAME = "main-layout";
 	
+	private RemoteLightCore core;
 	private static MainLayout instance;
 	private IconButton btnDarkmode;
 	private IconButton btnPopupControl;
@@ -47,6 +48,8 @@ public class MainLayout extends AppLayoutRouterLayout<LeftLayouts.LeftResponsive
 	
 	public MainLayout() {
 		instance = this;
+		core = RemoteLightWeb.getInstance().getCore();
+		
 		VaadinSession.getCurrent()
 		.setErrorHandler((ErrorHandler) errorEvent -> {
 			Notification.show("We are sorry, but an internal error occurred");
@@ -57,7 +60,7 @@ public class MainLayout extends AppLayoutRouterLayout<LeftLayouts.LeftResponsive
 		initPopupMenu();
 		
 		// toggle dark mode
-		String style = ((SettingSelection) RemoteLightWeb.getInstance().getAPI().getSettingsManager().getSettingFromId("ui.style")).getSelected();
+		String style = ((SettingSelection) core.getSettingsManager().getSettingFromId("ui.style")).getSelected();
 		setDarkMode(style.equalsIgnoreCase("Dark"));
 		
 		// show update notification
@@ -127,10 +130,10 @@ public class MainLayout extends AppLayoutRouterLayout<LeftLayouts.LeftResponsive
 		PaperSlider brightness = new PaperSlider();
 		brightness.setMax(100);
 		brightness.setPin(true);
-		brightness.setValue((int) Main.getInstance().getSettingsManager().getSettingObject("out.brightness").getValue());
+		brightness.setValue((int) core.getSettingsManager().getSettingObject("out.brightness").getValue());
 		brightness.addValueChangeListener(e -> {
-			Main.getInstance().getOutputManager().setBrightness(brightness.getValue());
-			Main.getInstance().getSettingsManager().getSettingObject("out.brightness").setValue(brightness.getValue());
+			core.getOutputManager().setBrightness(brightness.getValue());
+			core.getSettingsManager().getSettingObject("out.brightness").setValue(brightness.getValue());
 		});
 		popupContent.add(new Label("Brightness"), brightness);
 		
@@ -173,7 +176,7 @@ public class MainLayout extends AppLayoutRouterLayout<LeftLayouts.LeftResponsive
 	 */
 	public void setDarkMode(boolean enable) {
 		ThemeList themeList = UI.getCurrent().getElement().getThemeList();
-		SettingSelection setting = ((SettingSelection) RemoteLightWeb.getInstance().getAPI().getSettingsManager().getSettingFromId("ui.style"));
+		SettingSelection setting = ((SettingSelection) RemoteLightWeb.getInstance().getCore().getSettingsManager().getSettingFromId("ui.style"));
 		if (!enable) {
 			themeList.remove(Lumo.DARK);
 			btnDarkmode.setIcon(VaadinIcon.MOON_O.create());

@@ -1,9 +1,8 @@
 package de.lars.remotelightweb.ui.components.settingpanels;
 
-import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.textfield.TextField;
 
-import de.lars.remotelightclient.settings.types.SettingString;
+import de.lars.remotelightcore.settings.types.SettingString;
 
 public class SettingStringPanel extends SettingPanel {
 	

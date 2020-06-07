@@ -21,10 +21,10 @@ import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 
-import de.lars.remotelightclient.lua.LuaManager;
-import de.lars.remotelightclient.settings.SettingsManager;
-import de.lars.remotelightclient.settings.types.SettingObject;
-import de.lars.remotelightclient.utils.DirectoryUtil;
+import de.lars.remotelightcore.lua.LuaManager;
+import de.lars.remotelightcore.settings.SettingsManager;
+import de.lars.remotelightcore.settings.types.SettingObject;
+import de.lars.remotelightcore.utils.DirectoryUtil;
 import de.lars.remotelightweb.RemoteLightWeb;
 import de.lars.remotelightweb.backend.scripteditor.FileEditor;
 import de.lars.remotelightweb.ui.MainLayout;
@@ -37,8 +37,8 @@ import de.lars.remotelightweb.ui.utils.UIUtils;
 public class ScriptsView extends FlexLayout {
 	private final String CLASS_NAME = "scripts-view";
 	
-	private SettingsManager sm = RemoteLightWeb.getInstance().getAPI().getSettingsManager();
-	private LuaManager luaManager = RemoteLightWeb.getInstance().getAPI().getLuaManager();
+	private SettingsManager sm = RemoteLightWeb.getInstance().getCore().getSettingsManager();
+	private LuaManager luaManager = RemoteLightWeb.getInstance().getCore().getLuaManager();
 	private FlexLayout layoutScripts;
 	private FormLayout layoutSpeed;
 	private Div editDiv;

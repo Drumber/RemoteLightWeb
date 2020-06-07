@@ -28,34 +28,39 @@
 	</parent>
 
 	<repositories>
-        <!-- Main Maven repository -->
-        <repository>
-            <id>central</id>
-            <url>https://repo.maven.apache.org/maven2</url>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-        </repository>
-        <!-- Repository used by many Vaadin add-ons -->
-        <repository>
-            <id>Vaadin Directory</id>
-            <url>https://maven.vaadin.com/vaadin-addons</url>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-        </repository>
-    </repositories>
+		<!-- Main Maven repository -->
+		<repository>
+			<id>central</id>
+			<url>https://repo.maven.apache.org/maven2</url>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</repository>
+		<!-- Repository used by many Vaadin add-ons -->
+		<repository>
+			<id>Vaadin Directory</id>
+			<url>https://maven.vaadin.com/vaadin-addons</url>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</repository>
+		<!-- JitPack repository -->
+		<repository>
+			<id>jitpack.io</id>
+			<url>https://jitpack.io</url>
+		</repository>
+	</repositories>
 
-    <pluginRepositories>
-        <!-- Main Maven repository -->
-        <pluginRepository>
-            <id>central</id>
-            <url>https://repo.maven.apache.org/maven2</url>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-        </pluginRepository>
-    </pluginRepositories>
+	<pluginRepositories>
+		<!-- Main Maven repository -->
+		<pluginRepository>
+			<id>central</id>
+			<url>https://repo.maven.apache.org/maven2</url>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</pluginRepository>
+	</pluginRepositories>
 
 	<dependencyManagement>
 		<dependencies>
@@ -140,13 +145,13 @@
 		</dependency>
 		<dependency>
 			<groupId>de.lars</groupId>
-			<artifactId>remotelight</artifactId>
-			<version>0.2.0.8.3</version>
+			<artifactId>remotelight-core</artifactId>
+			<version>0.2.1</version>
 		</dependency>
 		<dependency>
-			<groupId>de.lars</groupId>
-			<artifactId>updater</artifactId>
-			<version>1.1</version>
+			<groupId>com.github.Drumber</groupId>
+			<artifactId>Updater</artifactId>
+			<version>-70fe93707b-1</version>
 		</dependency>
 	</dependencies>
 

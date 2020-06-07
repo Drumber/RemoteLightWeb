@@ -1,9 +1,8 @@
 package de.lars.remotelightweb.ui.components.settingpanels;
 
-import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.textfield.NumberField;
 
-import de.lars.remotelightclient.settings.types.SettingDouble;
+import de.lars.remotelightcore.settings.types.SettingDouble;
 
 public class SettingDoublePanel extends SettingPanel {
 	

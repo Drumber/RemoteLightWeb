@@ -1,9 +1,8 @@
 package de.lars.remotelightweb.ui.components.settingpanels;
 
 import com.vaadin.flow.component.checkbox.Checkbox;
-import com.vaadin.flow.component.html.Label;
 
-import de.lars.remotelightclient.settings.types.SettingBoolean;
+import de.lars.remotelightcore.settings.types.SettingBoolean;
 
 public class SettingBooleanPanel extends SettingPanel {
 	

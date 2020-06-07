@@ -6,7 +6,7 @@ import com.vaadin.flow.component.html.H5;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.IntegerField;
 
-import de.lars.remotelightclient.out.Output;
+import de.lars.remotelightcore.out.Output;
 
 public class OutputPatchPanel extends VerticalLayout {
 	

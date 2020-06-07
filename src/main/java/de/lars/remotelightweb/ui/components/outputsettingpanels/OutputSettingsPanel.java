@@ -1,7 +1,8 @@
 package de.lars.remotelightweb.ui.components.outputsettingpanels;
 
 import com.vaadin.flow.component.formlayout.FormLayout;
-import de.lars.remotelightclient.devices.Device;
+
+import de.lars.remotelightcore.devices.Device;
 
 public abstract class OutputSettingsPanel extends FormLayout {
 	

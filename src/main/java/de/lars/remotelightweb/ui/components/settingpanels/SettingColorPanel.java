@@ -3,9 +3,8 @@ package de.lars.remotelightweb.ui.components.settingpanels;
 import com.github.juchar.colorpicker.ColorPicker;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dialog.Dialog;
-import com.vaadin.flow.component.html.Label;
 
-import de.lars.remotelightclient.settings.types.SettingColor;
+import de.lars.remotelightcore.settings.types.SettingColor;
 import de.lars.remotelightweb.ui.utils.ColorUtils;
 
 public class SettingColorPanel extends SettingPanel {

@@ -16,12 +16,11 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 
-import de.lars.remotelightclient.Main;
-import de.lars.remotelightclient.settings.Setting;
-import de.lars.remotelightclient.settings.SettingsManager;
-import de.lars.remotelightclient.settings.SettingsManager.SettingCategory;
-import de.lars.remotelightclient.settings.types.SettingSelection;
-import de.lars.remotelightclient.settings.types.SettingString;
+import de.lars.remotelightcore.settings.Setting;
+import de.lars.remotelightcore.settings.SettingsManager;
+import de.lars.remotelightcore.settings.SettingsManager.SettingCategory;
+import de.lars.remotelightcore.settings.types.SettingSelection;
+import de.lars.remotelightcore.settings.types.SettingString;
 import de.lars.remotelightweb.RemoteLightWeb;
 import de.lars.remotelightweb.backend.utils.UpdateUtil;
 import de.lars.remotelightweb.ui.MainLayout;
@@ -39,7 +38,7 @@ public class SettingsView extends VerticalLayout {
 	private List<String> settingBlacklist = Arrays.asList(new String[] {"ui.language","main.checkupdates","ui.hideintray"});
 	
 	public SettingsView() {
-		sm = RemoteLightWeb.getInstance().getAPI().getSettingsManager();
+		sm = RemoteLightWeb.getInstance().getCore().getSettingsManager();
 		settingPanels = new ArrayList<>();
 		
 		add(getSettingsContainer(SettingCategory.General, "General"));
@@ -48,10 +47,10 @@ public class SettingsView extends VerticalLayout {
 		PaperSlider brightness = new PaperSlider();
 		brightness.setMax(100);
 		brightness.setPin(true);
-		brightness.setValue((int) Main.getInstance().getSettingsManager().getSettingObject("out.brightness").getValue());
+		brightness.setValue((int) RemoteLightWeb.getInstance().getCore().getSettingsManager().getSettingObject("out.brightness").getValue());
 		brightness.addValueChangeListener(e -> {
-			Main.getInstance().getOutputManager().setBrightness(brightness.getValue());
-			Main.getInstance().getSettingsManager().getSettingObject("out.brightness").setValue(brightness.getValue());
+			RemoteLightWeb.getInstance().getCore().getOutputManager().setBrightness(brightness.getValue());
+			RemoteLightWeb.getInstance().getCore().getSettingsManager().getSettingObject("out.brightness").setValue(brightness.getValue());
 		});
 		add(new Label("Brightness"), brightness);
 		
@@ -71,10 +70,10 @@ public class SettingsView extends VerticalLayout {
 			web.getStyle().set("margin", "5px 5px");
 			dialog.add(web);
 			Button system = new Button("Shutdown System", p -> {
-				RemoteLightWeb.getInstance().getAPI().close(false);
+				RemoteLightWeb.getInstance().getCore().close(false);
 				Runtime runtime = Runtime.getRuntime();
 				
-				String shutdownCmd = ((SettingString) RemoteLightWeb.getInstance().getAPI().getSettingsManager().getSettingFromId("rlweb.shutdowncmd")).getValue();
+				String shutdownCmd = ((SettingString) RemoteLightWeb.getInstance().getCore().getSettingsManager().getSettingFromId("rlweb.shutdowncmd")).getValue();
 				if(shutdownCmd == null || shutdownCmd.isEmpty()) {
 					shutdownCmd = "shutdown -h now";
 				}

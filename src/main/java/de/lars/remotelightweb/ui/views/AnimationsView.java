@@ -12,12 +12,12 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 
-import de.lars.remotelightclient.animation.Animation;
-import de.lars.remotelightclient.animation.AnimationManager;
-import de.lars.remotelightclient.devices.ConnectionState;
-import de.lars.remotelightclient.settings.Setting;
-import de.lars.remotelightclient.settings.SettingsManager;
-import de.lars.remotelightclient.settings.types.SettingObject;
+import de.lars.remotelightcore.animation.Animation;
+import de.lars.remotelightcore.animation.AnimationManager;
+import de.lars.remotelightcore.devices.ConnectionState;
+import de.lars.remotelightcore.settings.Setting;
+import de.lars.remotelightcore.settings.SettingsManager;
+import de.lars.remotelightcore.settings.types.SettingObject;
 import de.lars.remotelightweb.RemoteLightWeb;
 import de.lars.remotelightweb.ui.MainLayout;
 import de.lars.remotelightweb.ui.components.custom.PaperSlider;
@@ -31,8 +31,8 @@ import de.lars.remotelightweb.ui.utils.SettingPanelUtil;
 public class AnimationsView extends FlexLayout {
 	private final String CLASS_NAME = "animations-view";
 	
-	private SettingsManager sm = RemoteLightWeb.getInstance().getAPI().getSettingsManager();
-	private AnimationManager am = RemoteLightWeb.getInstance().getAPI().getAnimationManager();
+	private SettingsManager sm = RemoteLightWeb.getInstance().getCore().getSettingsManager();
+	private AnimationManager am = RemoteLightWeb.getInstance().getCore().getAnimationManager();
 	private FlexLayout layoutAnimations;
 	private VerticalLayout layoutOptions;
 	private FormLayout layoutSpeed;
@@ -112,8 +112,8 @@ public class AnimationsView extends FlexLayout {
 		if(am.getActiveAnimation() != null && am.getActiveAnimation().getName().equals(ani.getName())) {
 			am.stop();
 		} else {
-			if(RemoteLightWeb.getInstance().getAPI().getOutputManager().getActiveOutput() != null &&
-					RemoteLightWeb.getInstance().getAPI().getOutputManager().getActiveOutput().getState() == ConnectionState.CONNECTED)
+			if(RemoteLightWeb.getInstance().getCore().getOutputManager().getActiveOutput() != null &&
+					RemoteLightWeb.getInstance().getCore().getOutputManager().getActiveOutput().getState() == ConnectionState.CONNECTED)
 			{
 				am.start(ani);
 			} else {

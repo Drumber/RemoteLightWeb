@@ -3,7 +3,7 @@ package de.lars.remotelightweb.ui.components.settingpanels;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 
-import de.lars.remotelightclient.settings.Setting;
+import de.lars.remotelightcore.settings.Setting;
 
 public abstract class SettingPanel extends HorizontalLayout {
 	

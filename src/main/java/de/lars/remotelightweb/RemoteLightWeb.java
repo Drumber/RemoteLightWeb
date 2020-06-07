@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.InputStream;
 import java.nio.file.Paths;
 import java.util.Properties;
+
 import javax.annotation.PreDestroy;
 
 import org.springframework.boot.SpringApplication;
@@ -15,13 +16,13 @@ import org.springframework.boot.web.servlet.support.SpringBootServletInitializer
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.event.EventListener;
 
-import de.lars.remotelightclient.api.RemoteLightAPI;
-import de.lars.remotelightclient.cmd.StartParameterHandler;
-import de.lars.remotelightclient.settings.SettingsManager;
-import de.lars.remotelightclient.settings.SettingsManager.SettingCategory;
-import de.lars.remotelightclient.settings.types.SettingBoolean;
-import de.lars.remotelightclient.settings.types.SettingSelection;
-import de.lars.remotelightclient.settings.types.SettingString;
+import de.lars.remotelightcore.RemoteLightCore;
+import de.lars.remotelightcore.settings.SettingsManager;
+import de.lars.remotelightcore.settings.SettingsManager.SettingCategory;
+import de.lars.remotelightcore.settings.types.SettingBoolean;
+import de.lars.remotelightcore.settings.types.SettingSelection;
+import de.lars.remotelightcore.settings.types.SettingString;
+import de.lars.remotelightcore.utils.DirectoryUtil;
 import de.lars.remotelightweb.backend.ConfigFile;
 import de.lars.remotelightweb.backend.utils.UpdateUtil;
 
@@ -37,7 +38,7 @@ public class RemoteLightWeb extends SpringBootServletInitializer {
 	private static ConfigFile config;
 	private static ConfigurableApplicationContext context;
 	private static RemoteLightWeb instance;
-	private RemoteLightAPI rlApi;
+	private RemoteLightCore remoteLightCore;
 	private UpdateUtil updateUtil;
 	private static long lastUpdateNotification;
 	private boolean closing;
@@ -54,11 +55,10 @@ public class RemoteLightWeb extends SpringBootServletInitializer {
     
     @EventListener(ApplicationReadyEvent.class)
     public void afterStartUp() {
-		// set up RemoteLightAPI
-		RemoteLightAPI.setRootDirectory(Paths.get(".").toAbsolutePath().normalize().toString());	// directory where the jar was executed
-		RemoteLightAPI.setRootName(ROOT_FOLDER_NAME);
-		RemoteLightAPI.startParameter = new StartParameterHandler(new String[0]);
-		rlApi = new RemoteLightAPI();
+		// set up RemoteLightCore
+    	DirectoryUtil.setRootPath(Paths.get(".").toAbsolutePath().normalize().toString()); // directory where the jar was executed
+		DirectoryUtil.DATA_DIR_NAME = ROOT_FOLDER_NAME;
+		remoteLightCore = new RemoteLightCore(new String[0], true);
 		updateUtil = new UpdateUtil(VERSION);
 		setup();	// initial some settings and check for updates
     }
@@ -77,7 +77,7 @@ public class RemoteLightWeb extends SpringBootServletInitializer {
     		return;
     	closing = true;
 		System.out.println("###################################\n# Shutting down...\n###################################");
-		getInstance().getAPI().close(false);
+		getInstance().getCore().close(false);
 		try {
 			Thread.sleep(2000);
 		} catch (InterruptedException e) {}
@@ -95,8 +95,8 @@ public class RemoteLightWeb extends SpringBootServletInitializer {
      * 
      * @return RemoteLightAPI
      */
-    public RemoteLightAPI getAPI() {
-    	return rlApi;
+    public RemoteLightCore getCore() {
+    	return remoteLightCore;
     }
     
     public static ConfigFile getConfig() {
@@ -131,7 +131,7 @@ public class RemoteLightWeb extends SpringBootServletInitializer {
     }
     
     private void setup() {
-    	SettingsManager s = getAPI().getSettingsManager();
+    	SettingsManager s = getCore().getSettingsManager();
     	// disable standard updater
     	((SettingBoolean) s.getSettingFromId("main.checkupdates")).setValue(false);
     	// add RemoteLightWeb updater setting
