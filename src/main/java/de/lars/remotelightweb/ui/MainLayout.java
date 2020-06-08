@@ -32,7 +32,6 @@ import de.lars.updater.sites.GitHubParser;
 @Route
 @PWA(name = "RemoteLightWeb Control Software", shortName = "RemoteLightWeb")
 public class MainLayout extends AppLayoutRouterLayout<LeftLayouts.LeftResponsive> {
-	private final String CLASS_NAME = "main-layout";
 	
 	private RemoteLightCore core;
 	private static MainLayout instance;

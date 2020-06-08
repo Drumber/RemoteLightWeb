@@ -77,7 +77,8 @@ public class MainView extends FlexLayout {
 		cardOptions = new Card(innerLayout);
 		cardOptions.setVisible(false);
 		cardOptions.getStyle().set("margin", "10px");
-		cardOptions.getStyle().set("max-height", "50%");
+		cardOptions.getStyle().set("max-height", "60%");
+		cardOptions.getStyle().set("min-height", "250px");
 		//UIUtils.configureCard(card);
         
 		add(layoutOutputs, cardOptions);
