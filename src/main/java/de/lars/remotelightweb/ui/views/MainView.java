@@ -27,8 +27,8 @@ import de.lars.remotelightcore.out.OutputManager;
 import de.lars.remotelightcore.utils.OutputUtil;
 import de.lars.remotelightweb.RemoteLightWeb;
 import de.lars.remotelightweb.ui.MainLayout;
-import de.lars.remotelightweb.ui.components.MenuIcons;
 import de.lars.remotelightweb.ui.components.custom.PanelButton;
+import de.lars.remotelightweb.ui.components.icons.MenuIcons;
 import de.lars.remotelightweb.ui.components.outputsettingpanels.*;
 
 @CssImport("./styles/main-view-style.css")

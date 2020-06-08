@@ -5,7 +5,6 @@ import com.github.appreciated.app.layout.component.applayout.AppLayout;
 import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Label;
-import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.FlexComponent.Alignment;
 import com.vaadin.flow.component.orderedlayout.FlexComponent.JustifyContentMode;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -18,6 +17,7 @@ import de.lars.remotelightweb.ui.MainLayout;
 import de.lars.remotelightweb.ui.components.custom.PaperSlider;
 import de.lars.remotelightweb.ui.components.dialogs.ShutdownDialog;
 import de.lars.remotelightweb.ui.components.dialogs.UpdateDialog;
+import de.lars.remotelightweb.ui.components.icons.ControlIcons;
 
 @CssImport("./styles/popup-control-panel-style.css")
 public class ControlPanel extends Div {
@@ -55,10 +55,10 @@ public class ControlPanel extends Div {
 		popupContent.setJustifyContentMode(JustifyContentMode.CENTER);
 		popupContent.setPadding(false);
 		
-		btnBrightness	= new IconButton(VaadinIcon.SUN_O.create());
-		btnDarkMode		= new IconButton(VaadinIcon.MOON_O.create());
-		btnUpdate		= new IconButton(VaadinIcon.REFRESH.create());
-		btnShutdown		= new IconButton(VaadinIcon.POWER_OFF.create());
+		btnBrightness	= new IconButton(ControlIcons.BRIGHTNESS.create());
+		btnDarkMode		= new IconButton(ControlIcons.DARK_MODE.create());
+		btnUpdate		= new IconButton(ControlIcons.UPDATE.create());
+		btnShutdown		= new IconButton(ControlIcons.SHUTDOWN.create());
 		
 		btnBrightness.getElement().setProperty("title", "Change Brightness");
 		btnDarkMode.getElement().setProperty("title", "Toggle DarkMode");
@@ -95,7 +95,7 @@ public class ControlPanel extends Div {
 	}
 	
 	public void updateValues() {
-		btnDarkMode.setIcon(main.isDarkModeEnabled() ? VaadinIcon.ADJUST.create() : VaadinIcon.MOON_O.create());
+		btnDarkMode.setIcon(main.isDarkModeEnabled() ? ControlIcons.LIGHT_MODE.create() : ControlIcons.DARK_MODE.create());
 		sliderBrightness.setValue((int) core.getSettingsManager().getSettingObject("out.brightness").getValue());
 	}
 	

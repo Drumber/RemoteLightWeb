@@ -1,4 +1,4 @@
-package de.lars.remotelightweb.ui.components;
+package de.lars.remotelightweb.ui.components.icons;
 
 import com.vaadin.flow.component.dependency.JsModule;
 import com.vaadin.flow.component.icon.Icon;
@@ -27,7 +27,8 @@ public enum MenuIcons {
 	SETTINGS("Settings"),
 	OUTPUTS("Outputs"),
 	ERROR("Error"),
-	HELP("Help");
+	HELP("Help"),
+	CONTROL("Control");
 	
 	private final String iconName;
 	

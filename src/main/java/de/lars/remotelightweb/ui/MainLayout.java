@@ -12,7 +12,6 @@ import com.github.appreciated.app.layout.component.router.AppLayoutRouterLayout;
 import com.github.appreciated.app.layout.entity.Section;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.html.Span;
-import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.dom.ThemeList;
 import com.vaadin.flow.router.Route;
@@ -25,8 +24,8 @@ import de.lars.remotelightcore.RemoteLightCore;
 import de.lars.remotelightcore.settings.types.SettingSelection;
 import de.lars.remotelightweb.RemoteLightWeb;
 import de.lars.remotelightweb.ui.components.ControlPanel;
-import de.lars.remotelightweb.ui.components.MenuIcons;
 import de.lars.remotelightweb.ui.components.dialogs.UpdateDialog;
+import de.lars.remotelightweb.ui.components.icons.MenuIcons;
 import de.lars.remotelightweb.ui.views.*;
 import de.lars.updater.sites.GitHubParser;
 
@@ -73,7 +72,7 @@ public class MainLayout extends AppLayoutRouterLayout<LeftLayouts.LeftResponsive
 	 * Build AppMenu
 	 */
 	private void initMenu() {
-		btnPopupControl = new IconButton(VaadinIcon.COGS.create(), e -> controlPanel.togglePopupControl());
+		btnPopupControl = new IconButton(MenuIcons.CONTROL.create(24), e -> controlPanel.togglePopupControl());
 		btnPopupControl.getElement().setProperty("title", "Control Panel");
 		
         init(AppLayoutBuilder.get(LeftLayouts.LeftResponsive.class)
