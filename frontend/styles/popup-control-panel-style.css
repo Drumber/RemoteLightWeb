@@ -28,7 +28,7 @@
 
 .popup-control-panel__wrapper {
 	background-color: var(--app-layout-bar-background-color);
-	width: 200px;
+	width: 250px;
 	height: auto;
 	border-radius: var(--lumo-border-radius);
 	padding: 20px;
@@ -45,4 +45,9 @@
 .popup-control-panel__brightness-container {
 	padding: 0 10px;
 	margin-top: var(--lumo-space-xs);
+	width: 100%;
+}
+
+.popup-control-panel__brightness-container > paper-slider {
+	width: 100%;
 }

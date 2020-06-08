@@ -23,7 +23,7 @@ public enum ControlIcons {
 	 * @return	new iron-icon with default size {@code 30px}
 	 */
 	public Icon create() {
-		return create(36);
+		return create(44);
 	}
 	
 	/**
