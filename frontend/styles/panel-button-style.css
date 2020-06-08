@@ -1,0 +1,36 @@
+/* card container */
+.panel-button__panel {
+	margin: 5px 5px;
+	width: 120px;
+	height: 120px;
+	white-space: normal;
+}
+
+/* on card hover */
+.panel-button__panel:hover {
+	opacity: 0.8;
+	background-color: hsla(214, 90%, 52%, 0.05);
+}
+
+/* card inner container div */
+.panel-button__panel-container {
+	padding: 0;
+	margin: auto;
+	width: 80%;
+	height: 80%;
+	display: flex;
+	justify-content: center;
+	flex-direction: column;
+	flex-wrap: nowrap;
+	align-items: center;
+	font-weight: 500;
+	color: var(--_lumo-button-color, var(--lumo-primary-text-color));
+}
+
+/* panel container items */
+.panel-button__panel-container > * {
+	margin: 10px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	max-width: 100%;
+}

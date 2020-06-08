@@ -7,6 +7,7 @@ import com.vaadin.flow.component.contextmenu.ContextMenu;
 import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H5;
+import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.notification.Notification.Position;
 import com.vaadin.flow.component.notification.NotificationVariant;
@@ -26,6 +27,8 @@ import de.lars.remotelightcore.out.OutputManager;
 import de.lars.remotelightcore.utils.OutputUtil;
 import de.lars.remotelightweb.RemoteLightWeb;
 import de.lars.remotelightweb.ui.MainLayout;
+import de.lars.remotelightweb.ui.components.MenuIcons;
+import de.lars.remotelightweb.ui.components.custom.PanelButton;
 import de.lars.remotelightweb.ui.components.outputsettingpanels.*;
 
 @CssImport("./styles/main-view-style.css")
@@ -87,33 +90,29 @@ public class MainView extends FlexLayout {
 	private void addOutputsToLayout() {
 		layoutOutputs.removeAll();
 		for(Device d : dm.getDevices()) {
-			String type = "Unknown";
+			MenuIcons mIcon = MenuIcons.ERROR;
 			if(d instanceof Arduino) {
-				type = "Arduino";
+				mIcon = MenuIcons.ARDUINO;
 			} else if(d instanceof RemoteLightServer) {
-				type = "RLServer";
+				mIcon = MenuIcons.RASPBERRYPI;
 			} else if(d instanceof Artnet) {
-				type = "Artnet";
+				mIcon = MenuIcons.ARTNET;
 			} else if(d instanceof Chain) {
-				type = "Chain";
+				mIcon = MenuIcons.CHAIN;
 			}
-			type += "\n";
-			// TODO multiline button with device type
 			
-			Button btn = new Button(d.getId());
-			btn.addClassName(CLASS_NAME + "__panels");
+			Icon icon = mIcon.create();
+			PanelButton btn = new PanelButton(d.getId(), icon);
 			btn.addClickListener(e -> deviceClicked(d));
 			addContextMenu(btn, d);
 			layoutOutputs.add(btn);
 			
 			if(om.getActiveOutput() != null && om.getActiveOutput() == d && d.getConnectionState() == ConnectionState.CONNECTED) {
-				btn.getStyle().set("border-style", "dashed");
-				btn.getStyle().set("border-width", "2px");
+				btn.setBorder("dashed", 2);
 			}
 		}
 		
-		Button add = new Button("Add");
-		add.addClassName(CLASS_NAME + "__panels");
+		PanelButton add = new PanelButton("Add");
 		contextMenuAdd.setTarget(add);
 		layoutOutputs.add(add);
 	}
@@ -123,7 +122,7 @@ public class MainView extends FlexLayout {
 	}
 	
 	// add right click menu to button
-	private void addContextMenu(Button button, Device d) {
+	private void addContextMenu(Component button, Device d) {
 		ContextMenu contextMenu = new ContextMenu(button);
 		contextMenu.addItem((om.getActiveOutput() == d && d.getConnectionState() == ConnectionState.CONNECTED)
 					? "Deactivate" : "Activate", e -> {
