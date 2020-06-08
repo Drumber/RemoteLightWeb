@@ -139,8 +139,13 @@ public class ControlPanel extends Div {
 	}
 	
 	public void setPopupControl(boolean visible) {
+		String transClassVisible = CLASS_NAME + "__root-visible";
+		String transClassHidden = CLASS_NAME + "__root-hidden";
+		removeClassNames(transClassVisible, transClassHidden);
+		addClassName(visible ? transClassVisible : transClassHidden);
 		getStyle().set("visibility", visible ? "visible" : "hidden");
 		getStyle().set("opacity", visible ? "1" : "0");
+		getStyle().set("max-height", visible ? "500px" : "0px");
 	}
 	
 	public boolean isPopupControlVisible() {

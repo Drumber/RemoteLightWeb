@@ -5,11 +5,25 @@
 	z-index: 100;
 	top: 65px;
 	right: 5px;
-	box-shadow: var(--lumo-box-shadow-l);
-	transition: box-shadow 0.5s ease, visibility, visibility 0.33s linear 0s, opacity 0.33s linear;
-	transition-delay: 0s;
+	box-shadow: var(--lumo-box-shadow-s);
 	border-radius: var(--lumo-border-radius);
 	background-color: var(--lumo-base-color);
+	overflow: hidden;
+	max-height: 500px;
+}
+
+.popup-control-panel__root:hover {
+	box-shadow: var(--lumo-box-shadow-m);
+}
+
+/* on popup open */
+.popup-control-panel__root-visible {
+	transition: box-shadow 0.5s ease 0.15s, visibility 0.15s linear 0.07s, opacity 0.15s linear 0.07s, max-height 0.15s linear 0s;
+}
+
+/* on popup close */
+.popup-control-panel__root-hidden {
+	transition: box-shadow 0.5s ease 0s, visibility 0.1s linear 0.3s, opacity 0.1s linear 0.3s, max-height 0.25s linear 0s;
 }
 
 .popup-control-panel__wrapper {
