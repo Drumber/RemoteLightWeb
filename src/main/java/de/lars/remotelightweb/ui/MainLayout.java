@@ -30,7 +30,9 @@ import de.lars.remotelightweb.ui.views.*;
 import de.lars.updater.sites.GitHubParser;
 
 @Route
-@PWA(name = "RemoteLightWeb Control Software", shortName = "RemoteLightWeb")
+@PWA(name = "RemoteLightWeb Control Software", shortName = "RemoteLight",
+	description = "LED Control Software for addressable LED strips.",
+	themeColor = "#2C3A4C")
 public class MainLayout extends AppLayoutRouterLayout<LeftLayouts.LeftResponsive> {
 	
 	private RemoteLightCore core;
