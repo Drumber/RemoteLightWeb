@@ -29,11 +29,12 @@ public class AboutView extends VerticalLayout {
 		add(getLabel("by Lars Obrath", "author"));
 		add(new Anchor("https://github.com/Drumber/RemoteLight", getLabel("View on GitHub", "github")));
 		
-		add(getLabel("Credits", "credits"));
+		add(getLabel("Open Source Libraries", "credits"));
 		add(getCreditLbl("Vaadin Web Framework", "https://vaadin.com/"));
 		add(getCreditLbl("App Layout by Appreciated", "https://github.com/appreciated/vaadin-app-layout"));
 		add(getCreditLbl("Css Grid Layout by Appreciated", "https://github.com/appreciated/grid-layout"));
 		add(getCreditLbl("Color picker by Appreciated / Juchar" , "https://github.com/Juchar/color-picker"));
+		add(getCreditLbl("RemoteLightCore & Dependencies", "https://github.com/Drumber/RemoteLight/blob/master/pom.xml#L46"));
 	}
 	
 	

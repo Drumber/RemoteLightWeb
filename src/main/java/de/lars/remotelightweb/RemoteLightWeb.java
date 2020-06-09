@@ -1,6 +1,7 @@
 package de.lars.remotelightweb;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Paths;
 import java.util.Properties;
@@ -15,12 +16,14 @@ import org.springframework.boot.system.ApplicationHome;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.event.EventListener;
+import org.tinylog.Logger;
 
 import de.lars.remotelightcore.RemoteLightCore;
 import de.lars.remotelightcore.settings.SettingsManager;
 import de.lars.remotelightcore.settings.SettingsManager.SettingCategory;
 import de.lars.remotelightcore.settings.types.SettingBoolean;
 import de.lars.remotelightcore.settings.types.SettingSelection;
+import de.lars.remotelightcore.settings.types.SettingSelection.Model;
 import de.lars.remotelightcore.settings.types.SettingString;
 import de.lars.remotelightcore.utils.DirectoryUtil;
 import de.lars.remotelightweb.backend.ConfigFile;
@@ -61,6 +64,7 @@ public class RemoteLightWeb extends SpringBootServletInitializer {
 		// set up RemoteLightCore
     	DirectoryUtil.setRootPath(Paths.get(".").toAbsolutePath().normalize().toString()); // directory where the jar was executed
 		DirectoryUtil.DATA_DIR_NAME = ROOT_FOLDER_NAME;
+		DirectoryUtil.RESOURCES_CLASSPATH = "/BOOT-INF/classes/resources/";
 		remoteLightCore = new RemoteLightCore(new String[0], true);
 		updateUtil = new UpdateUtil(VERSION);
 		setup();	// initial some settings and check for updates
@@ -74,7 +78,8 @@ public class RemoteLightWeb extends SpringBootServletInitializer {
      * Exit Spring Boot and the whole application
      */
     public static void exitApplication() {
-    	SpringApplication.exit(context, () -> 0);
+    	int exitcode = SpringApplication.exit(context, () -> 0);
+    	System.exit(exitcode);
     }
     
     @PreDestroy
@@ -84,9 +89,6 @@ public class RemoteLightWeb extends SpringBootServletInitializer {
     	closing = true;
 		System.out.println("###################################\n# Shutting down...\n###################################");
 		getInstance().getCore().close(false);
-		try {
-			Thread.sleep(2000);
-		} catch (InterruptedException e) {}
     }
     
     
@@ -142,8 +144,6 @@ public class RemoteLightWeb extends SpringBootServletInitializer {
     
     private void setup() {
     	SettingsManager s = getCore().getSettingsManager();
-    	// disable standard updater
-    	((SettingBoolean) s.getSettingFromId("main.checkupdates")).setValue(false);
     	// add RemoteLightWeb updater setting
     	s.addSetting(new SettingBoolean("rlweb.updater", "Updater", SettingCategory.General, "Check for updates at startup", true));
     	
@@ -155,6 +155,8 @@ public class RemoteLightWeb extends SpringBootServletInitializer {
     		shutdownCommand = "shutdown -h now";
     	}
     	
+    	// register settings
+    	s.addSetting(new SettingSelection("ui.style", "Style", SettingCategory.General, "UI Color Theme", new String[] {"Dark", "Light"}, "Dark", Model.ComboBox));
     	s.addSetting(new SettingString("rlweb.runcmd", "Run command after update", SettingCategory.Others, "This command is executed after an update", runCommand));
     	s.addSetting(new SettingString("rlweb.shutdowncmd", "Custom shutdown command", SettingCategory.Others, "Custom shutdown command for shutting down system", shutdownCommand));
     	s.addSetting(new SettingBoolean("rlweb.updater.screen", "Start updater in new screen (only Linux)", SettingCategory.Others, "Start updater in a new screen (needs screen installed)", false));
@@ -169,6 +171,16 @@ public class RemoteLightWeb extends SpringBootServletInitializer {
     		updateUtil.check();
     	}
     	lastUpdateNotification = -1;
+    	
+    	// copy lua example files
+    	File luaDestination = new File(DirectoryUtil.getLuaPath());
+    	if(!luaDestination.exists())
+    		luaDestination.mkdirs();
+    	try {
+			DirectoryUtil.copyZipFromJar("/resources/lua_examples/lua_examples.zip", luaDestination);
+		} catch (IOException e) {
+			Logger.error(e, "Could not copy Lua example files from jar file.");
+		}
     }
 
 }
