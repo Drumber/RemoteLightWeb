@@ -42,7 +42,7 @@ public class SettingColorPanel extends SettingPanel {
 		});
 		
 		if(setting.getDescription() != null && !setting.getDescription().isEmpty()) {
-			// TODO help text
+			add(getHelpIcon());
 		}
 	}
 

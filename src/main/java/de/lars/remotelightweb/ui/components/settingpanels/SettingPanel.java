@@ -1,9 +1,14 @@
 package de.lars.remotelightweb.ui.components.settingpanels;
 
+import com.github.appreciated.app.layout.component.appbar.IconButton;
 import com.vaadin.flow.component.html.Label;
+import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 
 import de.lars.remotelightcore.settings.Setting;
+import dev.mett.vaadin.tooltip.Tooltips;
+import dev.mett.vaadin.tooltip.config.TC_HIDE_ON_CLICK;
+import dev.mett.vaadin.tooltip.config.TooltipConfiguration;
 
 public abstract class SettingPanel extends HorizontalLayout {
 	
@@ -19,6 +24,14 @@ public abstract class SettingPanel extends HorizontalLayout {
 	
 	public Setting getSetting() {
 		return setting;
+	}
+	
+	protected IconButton getHelpIcon() {
+		IconButton button = new IconButton(VaadinIcon.QUESTION_CIRCLE.create());
+		TooltipConfiguration ttconfig = new TooltipConfiguration(setting.getDescription());
+		ttconfig.setHideOnClick(TC_HIDE_ON_CLICK.FALSE);
+		Tooltips.getCurrent().setTooltip(button, ttconfig);
+		return button;
 	}
 	
 	public interface SettingChangedListener {

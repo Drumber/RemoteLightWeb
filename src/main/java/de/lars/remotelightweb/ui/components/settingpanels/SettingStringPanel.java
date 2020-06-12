@@ -18,7 +18,7 @@ public class SettingStringPanel extends SettingPanel {
 		add(field);
 		
 		if(setting.getDescription() != null && !setting.getDescription().isEmpty()) {
-			// TODO help text
+			add(getHelpIcon());
 		}
 	}
 

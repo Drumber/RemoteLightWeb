@@ -30,7 +30,7 @@ public class SettingSelectionPanel extends SettingPanel {
 		}
 		
 		if(setting.getDescription() != null && !setting.getDescription().isEmpty()) {
-			// TODO help text
+			add(getHelpIcon());
 		}
 	}
 

@@ -18,7 +18,7 @@ public class SettingBooleanPanel extends SettingPanel {
 		add(checkBox);
 		
 		if(setting.getDescription() != null && !setting.getDescription().isEmpty()) {
-			// TODO help text
+			add(getHelpIcon());
 		}
 	}
 

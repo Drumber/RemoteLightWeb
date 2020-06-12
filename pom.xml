@@ -144,6 +144,12 @@
 			<artifactId>vaadin-rich-text-editor-flow</artifactId>
 		</dependency>
 		<dependency>
+			<groupId>dev.mett.vaadin</groupId>
+			<artifactId>tooltip</artifactId>
+			<version>1.5.0</version>
+		</dependency>
+		<!-- Local installed dependencies -->
+		<dependency>
 			<groupId>de.lars</groupId>
 			<artifactId>remotelight-core</artifactId>
 			<version>0.2.1</version>
