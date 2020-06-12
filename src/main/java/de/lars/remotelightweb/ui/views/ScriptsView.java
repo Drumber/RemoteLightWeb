@@ -16,7 +16,6 @@ import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.FlexLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
@@ -30,6 +29,9 @@ import de.lars.remotelightweb.backend.scripteditor.FileEditor;
 import de.lars.remotelightweb.ui.MainLayout;
 import de.lars.remotelightweb.ui.components.custom.PaperSlider;
 import de.lars.remotelightweb.ui.utils.UIUtils;
+import io.github.ciesielskis.AceEditor;
+import io.github.ciesielskis.AceMode;
+import io.github.ciesielskis.AceTheme;
 
 @CssImport("./styles/scripts-view-style.css")
 @PageTitle("Scripts")
@@ -170,8 +172,15 @@ public class ScriptsView extends FlexLayout {
 		
 		dialog.add(new Label(filePath));
 		
-		TextArea area = new TextArea();
-		area.setSizeFull();
+		AceEditor codeEditor = new AceEditor();
+		codeEditor.setTheme(AceTheme.eclipse);
+		codeEditor.setMode(AceMode.lua);
+		codeEditor.setFontSize(14);
+		codeEditor.setSoftTabs(false);
+		codeEditor.setTabSize(4);
+		codeEditor.setWidth("1000px");
+		codeEditor.setHeight("500px");
+		codeEditor.setMaxLines(0);
 		
 		String script;
 		try {
@@ -181,13 +190,13 @@ public class ScriptsView extends FlexLayout {
 			Notification.show("Error while reading Lua script: " + e.getMessage());
 			return;
 		}
-		area.setValue(script);
-		dialog.add(area);
+		codeEditor.setValue(script);
+		dialog.add(new Div(codeEditor));
 		
 		Button cancel = UIUtils.addMargin(new Button("Cancel", e -> dialog.close()), "5px 5px");
 		Button save = new Button("Save", e -> {
 			try {
-				FileEditor.writeStringToFile(filePath, area.getValue());
+				FileEditor.writeStringToFile(filePath, codeEditor.getValue());
 				dialog.close();
 			} catch (FileNotFoundException e1) {
 				Notification.show("Could not save script: " + e1.getMessage());
