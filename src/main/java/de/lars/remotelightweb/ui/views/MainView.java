@@ -186,7 +186,9 @@ public class MainView extends FlexLayout {
 		for(int i = 0; i < buttonLay.getComponentCount(); i++)
 			((Button) buttonLay.getComponentAt(i)).getStyle().set("margin", "5px 5px");
 		
-		H5 title = new H5("Configuration " + panel.getDevice().getId() + String.format(" (%s)", OutputUtil.getOutputTypeAsString(panel.getDevice())));
+		String titleMsg = (setup ? "Set up" : "Configuration " + panel.getDevice().getId())
+				+ String.format(" (%s)", OutputUtil.getOutputTypeAsString(panel.getDevice()));
+		H5 title = new H5(titleMsg);
 		
 		Div parentOptions = new Div(title, panel);
 		parentOptions.setSizeFull();

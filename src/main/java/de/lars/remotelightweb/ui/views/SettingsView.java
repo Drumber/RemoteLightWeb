@@ -29,7 +29,7 @@ public class SettingsView extends VerticalLayout {
 	
 	private SettingsManager sm;
 	private List<SettingPanel> settingPanels;
-	private List<String> settingBlacklist = Arrays.asList(new String[] {"ui.language","main.checkupdates","ui.hideintray"});
+	private List<String> settingBlacklist = Arrays.asList(new String[] {"main.checkupdates","ui.hideintray"});
 	
 	public SettingsView() {
 		sm = RemoteLightWeb.getInstance().getCore().getSettingsManager();

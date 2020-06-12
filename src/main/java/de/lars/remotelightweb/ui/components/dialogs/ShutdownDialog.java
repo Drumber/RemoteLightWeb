@@ -8,6 +8,7 @@ import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H3;
+import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 
 import de.lars.remotelightcore.settings.types.SettingString;
@@ -26,7 +27,27 @@ public class ShutdownDialog extends Dialog {
 		layout.setPadding(false);
 		
 		layout.add(new H3("Shutdown"));
-		layout.add(new Div(btnRLWeb, btnSystem));
+		Div divBtnWrapper = new Div();
+		divBtnWrapper.getStyle()
+			.set("margin", "auto")
+			.set("max-width", "450px")
+			.set("box-sizing", "border-box");
+		
+		Label lblRlweb = new Label("Close RemoteLightWeb and keep the system running.");
+		lblRlweb.getStyle()
+			.set("word-wrap", "break-word")
+			.set("white-space", "break-spaces");
+		divBtnWrapper.add(lblRlweb);
+		divBtnWrapper.add(btnRLWeb);
+		
+		Label lblSystem = new Label("Close RemoteLightWeb and shutdown the system.");
+		lblSystem.getStyle()
+			.set("word-wrap", "break-word")
+			.set("white-space", "break-spaces");
+		divBtnWrapper.add(lblSystem);
+		divBtnWrapper.add(btnSystem);
+		
+		layout.add(divBtnWrapper);
 		add(layout);
 	}
 	
@@ -34,7 +55,9 @@ public class ShutdownDialog extends Dialog {
 		btnRLWeb = new Button("Shutdown RemoteLightWeb", w -> {
 			RemoteLightWeb.exitApplication();
 		});
-		btnRLWeb.getStyle().set("margin", "5px 5px");
+		btnRLWeb.getStyle()
+			.set("width", "100%")
+			.set("margin-bottom", "20px");
 		
 		btnSystem = new Button("Shutdown System", p -> {
 			RemoteLightWeb.getInstance().getCore().close(false);
@@ -51,7 +74,7 @@ public class ShutdownDialog extends Dialog {
 				Logger.error(ex, "Shutdown >> Could not execute command!");
 			}
 		});
-		btnSystem.getStyle().set("margin", "5px 5px");
+		btnSystem.getStyle().set("width", "100%");
 	}
 
 }

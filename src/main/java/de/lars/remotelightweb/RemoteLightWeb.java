@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Paths;
+import java.util.Locale;
 import java.util.Properties;
 
 import javax.annotation.PreDestroy;
@@ -19,6 +20,7 @@ import org.springframework.context.event.EventListener;
 import org.tinylog.Logger;
 
 import de.lars.remotelightcore.RemoteLightCore;
+import de.lars.remotelightcore.lang.LangUtil;
 import de.lars.remotelightcore.settings.SettingsManager;
 import de.lars.remotelightcore.settings.SettingsManager.SettingCategory;
 import de.lars.remotelightcore.settings.types.SettingBoolean;
@@ -156,15 +158,14 @@ public class RemoteLightWeb extends SpringBootServletInitializer {
     	}
     	
     	// register settings
-    	s.addSetting(new SettingSelection("ui.style", "Style", SettingCategory.General, "UI Color Theme", new String[] {"Dark", "Light"}, "Dark", Model.ComboBox));
+    	s.addSetting(new SettingSelection("ui.language", "Language", SettingCategory.General, "UI Language", LangUtil.langCodeToName(LangUtil.LANGUAGES), "English", Model.ComboBox));
+    	s.addSetting(new SettingSelection("ui.style", "Style", SettingCategory.General, "UI Color Theme", new String[] {"Light", "Dark"}, "Light", Model.ComboBox));
     	s.addSetting(new SettingString("rlweb.runcmd", "Run command after update", SettingCategory.Others, "This command is executed after an update", runCommand));
     	s.addSetting(new SettingString("rlweb.shutdowncmd", "Custom shutdown command", SettingCategory.Others, "Custom shutdown command for shutting down system", shutdownCommand));
     	s.addSetting(new SettingBoolean("rlweb.updater.screen", "Start updater in new screen (only Linux)", SettingCategory.Others, "Start updater in a new screen (needs screen installed)", false));
     	
-    	// modify styles setting
-    	if(s.getSettingFromId("ui.style") != null) {
-    		((SettingSelection) s.getSettingFromId("ui.style")).setValues(new String[] {"Light", "Dark"});
-    	}
+    	//set language
+    	Locale.setDefault(new Locale(LangUtil.langNameToCode(((SettingSelection) s.getSettingFromId("ui.language")).getSelected())));
     	
     	// check for updates
     	if(((SettingBoolean) s.getSettingFromId("rlweb.updater")).getValue() && !VERSION.equals("?")) {
