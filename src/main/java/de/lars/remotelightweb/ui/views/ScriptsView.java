@@ -3,6 +3,7 @@ package de.lars.remotelightweb.ui.views;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.Arrays;
 
 import com.github.appreciated.card.Card;
 import com.vaadin.flow.component.button.Button;
@@ -11,6 +12,7 @@ import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.html.H3;
 import com.vaadin.flow.component.html.H4;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.notification.Notification;
@@ -21,13 +23,21 @@ import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 
 import de.lars.remotelightcore.lua.LuaManager;
+import de.lars.remotelightcore.settings.Setting;
 import de.lars.remotelightcore.settings.SettingsManager;
+import de.lars.remotelightcore.settings.SettingsManager.SettingCategory;
+import de.lars.remotelightcore.settings.types.SettingBoolean;
+import de.lars.remotelightcore.settings.types.SettingInt;
 import de.lars.remotelightcore.settings.types.SettingObject;
+import de.lars.remotelightcore.settings.types.SettingSelection;
+import de.lars.remotelightcore.settings.types.SettingSelection.Model;
 import de.lars.remotelightcore.utils.DirectoryUtil;
 import de.lars.remotelightweb.RemoteLightWeb;
 import de.lars.remotelightweb.backend.scripteditor.FileEditor;
 import de.lars.remotelightweb.ui.MainLayout;
 import de.lars.remotelightweb.ui.components.custom.PaperSlider;
+import de.lars.remotelightweb.ui.components.settingpanels.SettingPanel;
+import de.lars.remotelightweb.ui.utils.SettingPanelUtil;
 import de.lars.remotelightweb.ui.utils.UIUtils;
 import io.github.ciesielskis.AceEditor;
 import io.github.ciesielskis.AceMode;
@@ -48,6 +58,7 @@ public class ScriptsView extends FlexLayout {
 	public ScriptsView() {
 		sm.addSetting(new SettingObject("scripts.speed", null, 50));
 		
+		registerEditorSettings();
 		initComponents();
 		initLayout();
 		initSpeedFooter();
@@ -169,16 +180,12 @@ public class ScriptsView extends FlexLayout {
 		
 		Dialog dialog = new Dialog();
 		dialog.setSizeFull();
-		
-		dialog.add(new Label(filePath));
+		Label titlePath = new Label(filePath);
+		titlePath.getStyle().set("overflow-wrap", "break-word");
+		dialog.add(titlePath);
 		
 		AceEditor codeEditor = new AceEditor();
-		codeEditor.setTheme(AceTheme.eclipse);
-		codeEditor.setMode(AceMode.lua);
-		codeEditor.setFontSize(14);
-		codeEditor.setSoftTabs(false);
-		codeEditor.setTabSize(4);
-		codeEditor.setWidth("1000px");
+		updateCodeEditorSettings(codeEditor);
 		codeEditor.setHeight("500px");
 		codeEditor.setMaxLines(0);
 		
@@ -191,7 +198,10 @@ public class ScriptsView extends FlexLayout {
 			return;
 		}
 		codeEditor.setValue(script);
-		dialog.add(new Div(codeEditor));
+		Div editorWrapper = new Div(codeEditor);
+		editorWrapper.getStyle().set("margin-top", "5px")
+			.set("margin-bottom", "10px");
+		dialog.add(editorWrapper);
 		
 		Button cancel = UIUtils.addMargin(new Button("Cancel", e -> dialog.close()), "5px 5px");
 		Button save = new Button("Save", e -> {
@@ -203,7 +213,11 @@ public class ScriptsView extends FlexLayout {
 			}
 		});
 		save.getStyle().set("margin", "5px 5px");
-		dialog.add(UIUtils.addStyle(new Div(cancel, save), "float", "right"));
+		
+		Button btnOptions = new Button("Options", e -> openCodeEditorDialog(codeEditor));
+		btnOptions.getStyle().set("margin", "5px 5px");
+		
+		dialog.add(UIUtils.addStyle(new Div(btnOptions, cancel, save), "float", "right"));
 		dialog.open();
 	}
 	
@@ -264,6 +278,56 @@ public class ScriptsView extends FlexLayout {
 		layout.add(UIUtils.addStyle(new Div(cancel, delete), "margin-left", "auto"));
 		dialog.add(layout);
 		dialog.open();
+	}
+	
+	
+	/**
+	 * Register settings needed by the code editor
+	 */
+	private void registerEditorSettings() {
+		String[] themes = Arrays.stream(AceTheme.values()).map(Enum::name).toArray(String[]::new);
+		sm.addSetting(new SettingSelection("codeeditor.opt.theme", "Theme", SettingCategory.Intern, "Code Editor Style", themes, "eclipse", Model.ComboBox));
+		sm.addSetting(new SettingInt("codeeditor.opt.fontsize", "Font size", SettingCategory.Intern, "Editor font size", 14, 9, 20, 1));
+		sm.addSetting(new SettingInt("codeeditor.opt.tabsize", "Tab size", SettingCategory.Intern, "Tab size", 4, 1, 8, 1));
+		sm.addSetting(new SettingBoolean("codeeditor.opt.softtabs", "Softtabs", SettingCategory.Intern, "Use spaces instead of tabs", false));
+		sm.addSetting(new SettingBoolean("codeeditor.opt.wrap", "Word wrap", SettingCategory.Intern, null, false));
+	}
+	
+	/**
+	 * Open code editor options dialog
+	 */
+	protected void openCodeEditorDialog(AceEditor editor) {
+		Dialog dialog = new Dialog();
+		VerticalLayout layout = new VerticalLayout(new H3("Code Editor Options"));
+		layout.setPadding(false);
+		for(Setting setting : sm.getSettings()) {
+			if(setting.getId().startsWith("codeeditor.opt.")) {
+				SettingPanel panel = SettingPanelUtil.getSettingPanel(setting);
+				// setting change listener
+				panel.setSettingChangedListener(l -> {
+					panel.setValue();
+					// update editor options
+					updateCodeEditorSettings(editor);
+				});
+				// add setting panel to layout
+				layout.add(panel);
+			}
+		}
+		dialog.add(layout);
+		dialog.add(new Button("Close", e -> dialog.close()));
+		dialog.open();
+	}
+	
+	/**
+	 * update options of code editor
+	 */
+	public void updateCodeEditorSettings(AceEditor codeEditor) {
+		codeEditor.setTheme(AceTheme.valueOf(sm.getSetting(SettingSelection.class, "codeeditor.opt.theme").getSelected()));
+		codeEditor.setMode(AceMode.lua);
+		codeEditor.setFontSize(sm.getSetting(SettingInt.class, "codeeditor.opt.fontsize").getValue());
+		codeEditor.setSoftTabs(sm.getSetting(SettingBoolean.class, "codeeditor.opt.softtabs").getValue());
+		codeEditor.setTabSize(sm.getSetting(SettingInt.class, "codeeditor.opt.tabsize").getValue());
+		codeEditor.setWrap(sm.getSetting(SettingBoolean.class, "codeeditor.opt.wrap").getValue());
 	}
 
 }
