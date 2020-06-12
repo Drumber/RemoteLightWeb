@@ -34,6 +34,7 @@ public class AboutView extends VerticalLayout {
 		add(getCreditLbl("App Layout by Appreciated", "https://github.com/appreciated/vaadin-app-layout"));
 		add(getCreditLbl("Css Grid Layout by Appreciated", "https://github.com/appreciated/grid-layout"));
 		add(getCreditLbl("Color picker by Appreciated / Juchar" , "https://github.com/Juchar/color-picker"));
+		add(getCreditLbl("AceEditor by ciesielskis", "https://github.com/ciesielskis/AceEditor"));
 		add(getCreditLbl("RemoteLightCore & Dependencies", "https://github.com/Drumber/RemoteLight/blob/master/pom.xml#L46"));
 	}
 	
