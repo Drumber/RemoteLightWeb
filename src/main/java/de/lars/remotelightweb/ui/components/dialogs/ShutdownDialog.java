@@ -11,6 +11,8 @@ import com.vaadin.flow.component.html.H3;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 
+import de.lars.remotelightcore.notification.Notification;
+import de.lars.remotelightcore.notification.NotificationType;
 import de.lars.remotelightcore.settings.types.SettingString;
 import de.lars.remotelightweb.RemoteLightWeb;
 
@@ -60,7 +62,6 @@ public class ShutdownDialog extends Dialog {
 			.set("margin-bottom", "20px");
 		
 		btnSystem = new Button("Shutdown System", p -> {
-			RemoteLightWeb.getInstance().getCore().close(false);
 			Runtime runtime = Runtime.getRuntime();
 			
 			String shutdownCmd = ((SettingString) RemoteLightWeb.getInstance().getCore().getSettingsManager().getSettingFromId("rlweb.shutdowncmd")).getValue();
@@ -71,8 +72,11 @@ public class ShutdownDialog extends Dialog {
 			try {
 				runtime.exec(shutdownCmd);
 			} catch (IOException ex) {
+				RemoteLightWeb.getInstance().getCore().showNotification(NotificationType.ERROR, "Could not execute shutdown command.", Notification.LONG);
 				Logger.error(ex, "Shutdown >> Could not execute command!");
 			}
+			
+			RemoteLightWeb.exitApplication();
 		});
 		btnSystem.getStyle().set("width", "100%");
 	}

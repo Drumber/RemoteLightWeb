@@ -3,6 +3,7 @@ package de.lars.remotelightweb.backend.utils;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.UnknownHostException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.attribute.PosixFilePermission;
@@ -12,6 +13,8 @@ import java.util.Set;
 import org.springframework.boot.system.ApplicationHome;
 import org.tinylog.Logger;
 
+import de.lars.remotelightcore.notification.Notification;
+import de.lars.remotelightcore.notification.NotificationType;
 import de.lars.remotelightcore.settings.types.SettingBoolean;
 import de.lars.remotelightcore.settings.types.SettingString;
 import de.lars.remotelightcore.utils.DirectoryUtil;
@@ -33,6 +36,10 @@ public class UpdateUtil {
 	public void check() {
 		try {
 			parser.check();
+		} catch (UnknownHostException e) {
+			RemoteLightWeb.getInstance().getCore().showNotification(NotificationType.ERROR,
+					"Could not check for updates. Unable to connect to GitHub.com.", Notification.LONG);
+			Logger.warn("Could not check GitHub for updates: " + e.getMessage());
 		} catch (Exception e) {
 			Logger.error(e, "Error while checking for updates.");
 		}
@@ -44,7 +51,7 @@ public class UpdateUtil {
 	
 	
 	/**
-	 * Download latest release and replace current jar file
+	 * Download latest release and replace current jar file<p>
 	 * <!> This method will EXIT the application!
 	 * @param shutdown Should the system be shut down after the update?
 	 * @throws Exception 

@@ -6,7 +6,7 @@
 	<groupId>de.lars.remotelightweb</groupId>
 	<artifactId>remotelightweb</artifactId>
 	<name>RemoteLightWeb</name>
-	<version>1.0.3</version>
+	<version>1.0.4</version>
 	<packaging>jar</packaging>
 
 	<properties>

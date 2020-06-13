@@ -21,6 +21,7 @@ import org.tinylog.Logger;
 
 import de.lars.remotelightcore.RemoteLightCore;
 import de.lars.remotelightcore.lang.LangUtil;
+import de.lars.remotelightcore.musicsync.MusicSyncManager;
 import de.lars.remotelightcore.settings.SettingsManager;
 import de.lars.remotelightcore.settings.SettingsManager.SettingCategory;
 import de.lars.remotelightcore.settings.types.SettingBoolean;
@@ -67,6 +68,9 @@ public class RemoteLightWeb extends SpringBootServletInitializer {
     	DirectoryUtil.setRootPath(Paths.get(".").toAbsolutePath().normalize().toString()); // directory where the jar was executed
 		DirectoryUtil.DATA_DIR_NAME = ROOT_FOLDER_NAME;
 		DirectoryUtil.RESOURCES_CLASSPATH = "/BOOT-INF/classes/resources/";
+		MusicSyncManager.initNativeSound = false;
+		
+		// initialize RemoteLightCore
 		remoteLightCore = new RemoteLightCore(new String[0], true);
 		updateUtil = new UpdateUtil(VERSION);
 		setup();	// initial some settings and check for updates
