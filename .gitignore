@@ -20,5 +20,3 @@ webpack.generated.js
 /SSL/
 /RemoteLightWeb/
 webpack.config.js
-package-lock.json
-package.json
