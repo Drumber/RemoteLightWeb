@@ -179,7 +179,7 @@ public class ScriptsView extends FlexLayout {
 		}
 		
 		Dialog dialog = new Dialog();
-		dialog.setSizeFull();
+		//dialog.setSizeFull();
 		Label titlePath = new Label(filePath);
 		titlePath.getStyle().set("overflow-wrap", "break-word");
 		dialog.add(titlePath);
