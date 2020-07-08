@@ -5,21 +5,18 @@ import java.util.Arrays;
 import java.util.List;
 
 import com.vaadin.flow.component.DetachEvent;
-import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.H3;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 
+import de.lars.remotelightcore.lang.i18n;
 import de.lars.remotelightcore.settings.Setting;
 import de.lars.remotelightcore.settings.SettingsManager;
 import de.lars.remotelightcore.settings.SettingsManager.SettingCategory;
 import de.lars.remotelightcore.settings.types.SettingSelection;
 import de.lars.remotelightweb.RemoteLightWeb;
-import de.lars.remotelightweb.backend.utils.UpdateUtil;
 import de.lars.remotelightweb.ui.MainLayout;
-import de.lars.remotelightweb.ui.components.dialogs.ShutdownDialog;
-import de.lars.remotelightweb.ui.components.dialogs.UpdateDialog;
 import de.lars.remotelightweb.ui.components.settingpanels.SettingPanel;
 import de.lars.remotelightweb.ui.utils.SettingPanelUtil;
 
@@ -37,19 +34,6 @@ public class SettingsView extends VerticalLayout {
 		
 		add(getSettingsContainer(SettingCategory.General, "General"));
 		add(getSettingsContainer(SettingCategory.Others, "Others"));
-		
-		add(new Button("Check for updates", e -> {
-			UpdateUtil updater = RemoteLightWeb.getInstance().getUpdateUtil();
-			updater.check();
-			new UpdateDialog(updater.getParser()).open();
-		}));
-		
-		Button btnShutdown = new Button("Shutdown");
-		add(btnShutdown);
-		btnShutdown.addClickListener(e -> {
-			ShutdownDialog dialog = new ShutdownDialog();
-			dialog.open();
-		});
 	}
 	
 	private VerticalLayout getSettingsContainer(SettingCategory category, String title) {
@@ -81,6 +65,11 @@ public class SettingsView extends VerticalLayout {
 		for(SettingPanel sp : settingPanels) {
 			sp.setValue();
 		}
+		
+		// set default locale
+		String langCode = ((SettingSelection) sm.getSettingFromId("ui.language")).getSelected();
+		i18n.setLocale(langCode);
+		
 		super.onDetach(detachEvent);
 	}
 
