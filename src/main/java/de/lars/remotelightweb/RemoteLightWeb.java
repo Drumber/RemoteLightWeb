@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Paths;
-import java.util.Locale;
 import java.util.Properties;
 
 import javax.annotation.PreDestroy;
@@ -21,6 +20,7 @@ import org.tinylog.Logger;
 
 import de.lars.remotelightcore.RemoteLightCore;
 import de.lars.remotelightcore.lang.LangUtil;
+import de.lars.remotelightcore.lang.i18n;
 import de.lars.remotelightcore.musicsync.MusicSyncManager;
 import de.lars.remotelightcore.settings.SettingsManager;
 import de.lars.remotelightcore.settings.SettingsManager.SettingCategory;
@@ -168,8 +168,9 @@ public class RemoteLightWeb extends SpringBootServletInitializer {
     	s.addSetting(new SettingString("rlweb.shutdowncmd", "Custom shutdown command", SettingCategory.Others, "Custom shutdown command for shutting down system", shutdownCommand));
     	s.addSetting(new SettingBoolean("rlweb.updater.screen", "Start updater in new screen (only Linux)", SettingCategory.Others, "Start updater in a new screen (needs screen installed)", false));
     	
-    	//set language
-    	Locale.setDefault(new Locale(LangUtil.langNameToCode(((SettingSelection) s.getSettingFromId("ui.language")).getSelected())));
+    	// set default locale
+		String langCode = ((SettingSelection) s.getSettingFromId("ui.language")).getSelected();
+		i18n.setLocale(langCode);
     	
     	// check for updates
     	if(((SettingBoolean) s.getSettingFromId("rlweb.updater")).getValue() && !VERSION.equals("?")) {

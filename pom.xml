@@ -15,7 +15,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
-		<vaadin.version>14.2.1</vaadin.version>
+		<vaadin.version>14.2.3</vaadin.version>
 
 		<drivers.dir>${project.basedir}/drivers</drivers.dir>
 		<drivers.downloader.phase>pre-integration-test</drivers.downloader.phase>
@@ -147,13 +147,13 @@
 		<dependency>
 			<groupId>dev.mett.vaadin</groupId>
 			<artifactId>tooltip</artifactId>
-			<version>1.5.0</version>
+			<version>1.5.1</version>
 		</dependency>
 		<!-- Local installed dependencies -->
 		<dependency>
 			<groupId>de.lars</groupId>
 			<artifactId>remotelight-core</artifactId>
-			<version>0.2.1</version>
+			<version>0.2.2</version>
 		</dependency>
 		<dependency>
 			<groupId>com.github.Drumber</groupId>
