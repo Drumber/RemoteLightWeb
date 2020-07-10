@@ -5,6 +5,7 @@ import java.util.Properties;
 import org.apache.catalina.connector.Connector;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory;
+import org.springframework.boot.web.server.Ssl;
 import org.springframework.boot.web.server.WebServerFactoryCustomizer;
 import org.springframework.boot.web.servlet.server.ConfigurableServletWebServerFactory;
 import org.springframework.boot.web.servlet.server.ServletWebServerFactory;
@@ -38,15 +39,52 @@ public class ServerConfig {
     			
     			factory.setContextPath(prop.getProperty("context-path", ""));
     			factory.setPort(getPropNumber(prop, "https-port", 443));
+    			
+    			// configure custom user certificate (if enabled in config.properties)
+    			Ssl ssl = new Ssl();
+    			boolean enableCustomSsl = configureCustomCertificate(ssl, prop);
+    			if(enableCustomSsl) {
+    				factory.setSsl(ssl);
+    			}
     		}
     	};
+    }
+    
+    /**
+     * Configure {@link org.springframework.boot.web.server.Ssl} instance to use
+     * user specified custom certificate
+     * @return true on successful configuration, false on failure
+     */
+    private boolean configureCustomCertificate(Ssl ssl, Properties prop) {
+    	try {
+    		if(!Boolean.parseBoolean(prop.getProperty("enable-custom-ssl", "false")))
+    			return false;
+    		
+    		final String keystorePath	= prop.getProperty("ssl-keystore-path");
+    		final String keystorePassw	= prop.getProperty("ssl-keystore-password");
+    		final String keystoreType	= prop.getProperty("ssl-keystore-type");
+    		final String keystoreAlias	= prop.getProperty("ssl-keystore-alias");
+    		
+    		ssl.setEnabled(true);
+    		ssl.setKeyStore(keystorePath);
+    		ssl.setKeyPassword(keystorePassw);
+    		ssl.setKeyStoreType(keystoreType);
+    		ssl.setKeyAlias(keystoreAlias);
+    		return true;
+    		
+    	} catch(NumberFormatException e) {
+    		System.err.println("Could not configure custom SSL certificate. Invalid properties value(s). " + e.getMessage());
+    	}
+    	return false;
     }
     
     private int getPropNumber(Properties p, String key, int defaultVal) {
 		int val = 443;
 		try {
 			val = Integer.parseInt(p.getProperty(key, String.valueOf(defaultVal)));
-		} catch(NumberFormatException e) {}
+		} catch(NumberFormatException e) {
+			System.err.println("Invalid properties value: " + e.getMessage());
+		}
 		return val;
     }
 	
