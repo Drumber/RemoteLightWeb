@@ -61,7 +61,7 @@
       "tippy.js": "6.2.3"
     },
     "devDependencies": {
-      "webpack-babel-multi-target-plugin": "2.3.3",
+      "webpack-babel-multi-target-plugin": "2.5.0",
       "copy-webpack-plugin": "5.1.1",
       "compression-webpack-plugin": "4.0.1",
       "raw-loader": "3.1.0",
@@ -132,7 +132,7 @@
     "tippy.js": "6.2.3"
   },
   "devDependencies": {
-    "webpack-babel-multi-target-plugin": "2.3.3",
+    "webpack-babel-multi-target-plugin": "2.5.0",
     "copy-webpack-plugin": "5.1.1",
     "compression-webpack-plugin": "4.0.1",
     "raw-loader": "3.1.0",
